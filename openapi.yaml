@@ -1,0 +1,2131 @@
+openapi: 3.1.0
+info:
+  title: Moxie CRM Public API
+  description: |
+    The Moxie CRM Public API allows you to programmatically interact with your Moxie workspace.
+    This API enables management of clients, contacts, projects, invoices, time entries, expenses,
+    opportunities, tickets, and more.
+
+    ## Authentication
+    All API requests require authentication using an API key passed in the `X-API-KEY` header.
+
+    ## Rate Limiting
+    The API is rate limited to 100 requests per 5 minutes per workspace.
+
+    ## Base URL
+    The base URL is workspace-specific and follows the pattern:
+    `https://{pod}.withmoxie.com/api/public`
+
+    Where `{pod}` is your workspace's pod identifier (e.g., pod01, pod02).
+  version: 1.0.0
+  contact:
+    name: Moxie Support
+    url: https://help.withmoxie.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://{pod}.withmoxie.com/api/public
+    description: Moxie CRM Production API
+    variables:
+      pod:
+        default: pod01
+        description: Your workspace's pod identifier
+
+security:
+  - ApiKeyAuth: []
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+      description: Your Moxie API key
+
+  schemas:
+    # ==========================================
+    # Common Types
+    # ==========================================
+
+    PaymentTerms:
+      type: object
+      properties:
+        paymentDays:
+          type: integer
+          description: Number of days for payment terms
+          example: 30
+        latePaymentFee:
+          type: number
+          description: Late payment fee percentage
+          example: 1.5
+        hourlyAmount:
+          type: number
+          description: Default hourly rate
+          example: 150.00
+        whoPaysCardFees:
+          type: string
+          enum: [Client, Freelancer, Split]
+          description: Who pays credit card processing fees
+          example: Client
+
+    # ==========================================
+    # Client Schemas
+    # ==========================================
+
+    Contact:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique contact identifier
+        accountId:
+          type: string
+          format: uuid
+          description: Account identifier
+        clientId:
+          type: string
+          format: uuid
+          description: Associated client identifier
+        firstName:
+          type: string
+          description: Contact's first name
+          example: John
+        lastName:
+          type: string
+          description: Contact's last name
+          example: Doe
+        role:
+          type: string
+          description: Contact's role/title
+          example: Marketing Director
+        phone:
+          type: string
+          description: Phone number
+          example: "+1-555-123-4567"
+        email:
+          type: string
+          format: email
+          description: Email address
+          example: john.doe@example.com
+        mobile:
+          type: string
+          description: Mobile phone number
+        notes:
+          type: string
+          description: Additional notes
+        defaultContact:
+          type: boolean
+          description: Whether this is the default contact
+          default: false
+        invoiceContact:
+          type: boolean
+          description: Whether this contact receives invoices
+          default: false
+        portalAccess:
+          type: boolean
+          description: Whether this contact has portal access
+          default: false
+
+    Client:
+      type: object
+      required:
+        - name
+        - clientType
+        - currency
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique client identifier
+        accountId:
+          type: string
+          format: uuid
+          description: Account identifier
+        name:
+          type: string
+          description: Client name
+          example: Acme Corporation
+        clientType:
+          type: string
+          enum: [Client, Prospect]
+          description: Type of client
+          example: Client
+        initials:
+          type: string
+          description: Client initials for display
+          maxLength: 3
+          example: ACM
+        address1:
+          type: string
+          description: Primary address line
+        address2:
+          type: string
+          description: Secondary address line
+        city:
+          type: string
+          description: City
+        locality:
+          type: string
+          description: State/Province
+        postal:
+          type: string
+          description: Postal/ZIP code
+        country:
+          type: string
+          description: Country
+        website:
+          type: string
+          format: uri
+          description: Client website
+        phone:
+          type: string
+          description: Phone number
+        color:
+          type: string
+          description: Display color (hex)
+          example: "#FF5733"
+        taxId:
+          type: string
+          description: Tax identification number
+        leadSource:
+          type: string
+          description: How the client was acquired
+        archive:
+          type: boolean
+          description: Whether the client is archived
+          default: false
+        paymentTerms:
+          $ref: '#/components/schemas/PaymentTerms'
+        payInstructions:
+          type: string
+          description: Payment instructions for invoices
+        hourlyAmount:
+          type: number
+          description: Default hourly rate
+        roundingIncrement:
+          type: integer
+          description: Time rounding increment in minutes
+        currency:
+          type: string
+          description: Currency code (ISO 4217)
+          example: USD
+        stripeClientId:
+          type: string
+          description: Stripe customer ID
+        notes:
+          type: string
+          description: Internal notes
+        contacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Contact'
+          description: Associated contacts
+        logo:
+          type: string
+          format: uri
+          description: Client logo URL
+
+    CreateClientInput:
+      type: object
+      required:
+        - name
+        - clientType
+        - currency
+      properties:
+        name:
+          type: string
+          description: Client name
+          example: Acme Corporation
+        clientType:
+          type: string
+          enum: [Client, Prospect]
+          description: Type of client
+        currency:
+          type: string
+          description: Currency code (ISO 4217)
+          example: USD
+        initials:
+          type: string
+          maxLength: 3
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        locality:
+          type: string
+        postal:
+          type: string
+        country:
+          type: string
+        website:
+          type: string
+          format: uri
+        phone:
+          type: string
+        color:
+          type: string
+        taxId:
+          type: string
+        leadSource:
+          type: string
+        archive:
+          type: boolean
+        paymentTerms:
+          $ref: '#/components/schemas/PaymentTerms'
+        payInstructions:
+          type: string
+        hourlyAmount:
+          type: number
+        roundingIncrement:
+          type: integer
+        stripeClientId:
+          type: string
+        notes:
+          type: string
+        contacts:
+          type: array
+          items:
+            type: object
+            properties:
+              firstName:
+                type: string
+              lastName:
+                type: string
+              role:
+                type: string
+              phone:
+                type: string
+              email:
+                type: string
+                format: email
+              mobile:
+                type: string
+              notes:
+                type: string
+              defaultContact:
+                type: boolean
+              invoiceContact:
+                type: boolean
+              portalAccess:
+                type: boolean
+
+    CreateContactInput:
+      type: object
+      required:
+        - clientName
+      properties:
+        clientName:
+          type: string
+          description: Name of the client to add contact to
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+          format: email
+        mobile:
+          type: string
+        notes:
+          type: string
+        defaultContact:
+          type: boolean
+        invoiceContact:
+          type: boolean
+        portalAccess:
+          type: boolean
+
+    # ==========================================
+    # Project Schemas
+    # ==========================================
+
+    FeeSchedule:
+      type: object
+      properties:
+        feeType:
+          type: string
+          enum: [HOURLY, FIXED, RETAINER]
+          description: Type of fee structure
+        amount:
+          type: number
+          description: Fee amount
+        retainerSchedule:
+          type: string
+          description: Retainer billing schedule
+        estimateMax:
+          type: number
+          description: Maximum estimate
+        estimateMin:
+          type: number
+          description: Minimum estimate
+        retainerStart:
+          type: string
+          format: date
+          description: Retainer start date
+        retainerTiming:
+          type: string
+          description: When retainer is billed
+        retainerOverageRate:
+          type: number
+          description: Rate for hours over retainer
+        taxable:
+          type: boolean
+          description: Whether the fee is taxable
+
+    Project:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        accountId:
+          type: string
+          format: uuid
+        clientId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: Project name
+          example: Website Redesign
+        description:
+          type: string
+          description: Project description
+        active:
+          type: boolean
+          description: Whether the project is active
+        startDate:
+          type: string
+          format: date
+        dueDate:
+          type: string
+          format: date
+        dateCreated:
+          type: string
+          format: date-time
+        client:
+          $ref: '#/components/schemas/Client'
+        feeSchedule:
+          $ref: '#/components/schemas/FeeSchedule'
+        proposalId:
+          type: string
+          format: uuid
+        proposalName:
+          type: string
+        hexColor:
+          type: string
+          description: Display color
+          example: "#3498db"
+        portalAccess:
+          type: string
+          description: Portal access level
+        showTimeWorkedInPortal:
+          type: boolean
+
+    CreateProjectInput:
+      type: object
+      required:
+        - clientName
+        - name
+      properties:
+        clientName:
+          type: string
+          description: Name of the client (must exist)
+        name:
+          type: string
+          description: Project name
+        description:
+          type: string
+        startDate:
+          type: string
+          format: date
+        dueDate:
+          type: string
+          format: date
+        feeSchedule:
+          $ref: '#/components/schemas/FeeSchedule'
+        hexColor:
+          type: string
+        portalAccess:
+          type: string
+
+    ProjectTaskStage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: Stage name
+          example: In Progress
+        order:
+          type: integer
+          description: Display order
+
+    # ==========================================
+    # Invoice Schemas
+    # ==========================================
+
+    InvoiceItem:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Line item description
+        quantity:
+          type: number
+          description: Quantity
+        rate:
+          type: number
+          description: Unit rate
+        taxable:
+          type: boolean
+          description: Whether this item is taxable
+        projectName:
+          type: string
+          description: Associated project name
+
+    InvoiceSendTo:
+      type: object
+      properties:
+        send:
+          type: boolean
+          description: Whether to send the invoice
+        contacts:
+          type: array
+          items:
+            type: string
+          description: Email addresses to send to
+        emailTemplateName:
+          type: string
+          description: Name of email template to use
+
+    Invoice:
+      type: object
+      required:
+        - clientName
+        - items
+      properties:
+        id:
+          type: string
+          format: uuid
+        invoiceNumber:
+          type: string
+          description: Invoice number
+          example: INV-2024-001
+        clientName:
+          type: string
+          description: Client name
+        templateName:
+          type: string
+          description: Invoice template name
+        dueDate:
+          type: string
+          format: date
+        taxRate:
+          type: number
+          description: Tax rate percentage
+        discountPercent:
+          type: number
+          description: Discount percentage
+        paymentInstructions:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvoiceItem'
+        sendTo:
+          $ref: '#/components/schemas/InvoiceSendTo'
+        status:
+          type: string
+          description: Invoice status
+          example: draft
+        total:
+          type: number
+          description: Total amount
+        amountDue:
+          type: number
+          description: Amount still due
+
+    CreateInvoiceInput:
+      type: object
+      required:
+        - clientName
+        - items
+      properties:
+        clientName:
+          type: string
+          description: Client name (must exist)
+        invoiceNumber:
+          type: string
+        templateName:
+          type: string
+        dueDate:
+          type: string
+          format: date
+        taxRate:
+          type: number
+        discountPercent:
+          type: number
+        paymentInstructions:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvoiceItem'
+        sendTo:
+          $ref: '#/components/schemas/InvoiceSendTo'
+
+    ApplyPaymentInput:
+      type: object
+      required:
+        - invoiceId
+        - amount
+      properties:
+        invoiceId:
+          type: string
+          format: uuid
+          description: Invoice ID to apply payment to
+        amount:
+          type: number
+          description: Payment amount
+        paymentDate:
+          type: string
+          format: date
+        paymentMethod:
+          type: string
+          description: Payment method used
+          example: Bank Transfer
+        notes:
+          type: string
+          description: Payment notes
+
+    # ==========================================
+    # Task Schemas
+    # ==========================================
+
+    Task:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: Task name
+        description:
+          type: string
+        projectName:
+          type: string
+        clientName:
+          type: string
+        assignedTo:
+          type: string
+          description: Email of assigned user
+        dueDate:
+          type: string
+          format: date
+        status:
+          type: string
+        priority:
+          type: string
+          enum: [low, medium, high]
+
+    CreateTaskInput:
+      type: object
+      required:
+        - name
+        - projectName
+      properties:
+        name:
+          type: string
+          description: Task name
+        description:
+          type: string
+        projectName:
+          type: string
+          description: Project name (must exist)
+        clientName:
+          type: string
+        assignedTo:
+          type: string
+          description: Email of user to assign
+        dueDate:
+          type: string
+          format: date
+        status:
+          type: string
+        priority:
+          type: string
+          enum: [low, medium, high]
+
+    # ==========================================
+    # Time Entry Schemas
+    # ==========================================
+
+    TimeEntry:
+      type: object
+      required:
+        - timerStart
+        - timerEnd
+        - userEmail
+      properties:
+        id:
+          type: string
+          format: uuid
+        timerStart:
+          type: string
+          format: date-time
+          description: Start time (ISO 8601)
+        timerEnd:
+          type: string
+          format: date-time
+          description: End time (ISO 8601)
+        clientName:
+          type: string
+        projectName:
+          type: string
+        deliverableName:
+          type: string
+        userEmail:
+          type: string
+          format: email
+          description: Email of user who worked
+        notes:
+          type: string
+        duration:
+          type: integer
+          description: Duration in minutes
+
+    CreateTimeEntryInput:
+      type: object
+      required:
+        - timerStart
+        - timerEnd
+        - userEmail
+      properties:
+        timerStart:
+          type: string
+          format: date-time
+          description: Start time (ISO 8601)
+        timerEnd:
+          type: string
+          format: date-time
+          description: End time (ISO 8601)
+        userEmail:
+          type: string
+          format: email
+        clientName:
+          type: string
+        projectName:
+          type: string
+        deliverableName:
+          type: string
+        createClient:
+          type: boolean
+          description: Auto-create client if not exists
+          default: false
+        createProject:
+          type: boolean
+          description: Auto-create project if not exists
+          default: false
+        createDeliverable:
+          type: boolean
+          description: Auto-create deliverable if not exists
+          default: false
+        notes:
+          type: string
+
+    # ==========================================
+    # Expense Schemas
+    # ==========================================
+
+    Expense:
+      type: object
+      required:
+        - description
+        - amount
+        - date
+      properties:
+        id:
+          type: string
+          format: uuid
+        description:
+          type: string
+        amount:
+          type: number
+        date:
+          type: string
+          format: date
+        vendorName:
+          type: string
+        clientName:
+          type: string
+        projectName:
+          type: string
+        category:
+          type: string
+        billable:
+          type: boolean
+          default: false
+        reimbursable:
+          type: boolean
+          default: false
+
+    CreateExpenseInput:
+      type: object
+      required:
+        - description
+        - amount
+        - date
+      properties:
+        description:
+          type: string
+        amount:
+          type: number
+        date:
+          type: string
+          format: date
+        vendorName:
+          type: string
+        clientName:
+          type: string
+        projectName:
+          type: string
+        category:
+          type: string
+        billable:
+          type: boolean
+        reimbursable:
+          type: boolean
+
+    # ==========================================
+    # Opportunity Schemas
+    # ==========================================
+
+    Opportunity:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: Opportunity name
+        clientName:
+          type: string
+        contactName:
+          type: string
+        stage:
+          type: string
+          description: Pipeline stage name
+        value:
+          type: number
+          description: Estimated value
+        probability:
+          type: number
+          description: Win probability (0-100)
+          minimum: 0
+          maximum: 100
+        expectedCloseDate:
+          type: string
+          format: date
+        description:
+          type: string
+
+    CreateOpportunityInput:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        clientName:
+          type: string
+        contactName:
+          type: string
+        stage:
+          type: string
+        value:
+          type: number
+        probability:
+          type: number
+        expectedCloseDate:
+          type: string
+          format: date
+        description:
+          type: string
+
+    PipelineStage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        order:
+          type: integer
+
+    # ==========================================
+    # Ticket Schemas
+    # ==========================================
+
+    Ticket:
+      type: object
+      required:
+        - subject
+      properties:
+        id:
+          type: string
+          format: uuid
+        subject:
+          type: string
+        description:
+          type: string
+        clientName:
+          type: string
+        projectName:
+          type: string
+        status:
+          type: string
+        priority:
+          type: string
+          enum: [low, medium, high]
+        assignedTo:
+          type: string
+          format: email
+
+    CreateTicketInput:
+      type: object
+      required:
+        - subject
+      properties:
+        subject:
+          type: string
+        description:
+          type: string
+        clientName:
+          type: string
+        projectName:
+          type: string
+        status:
+          type: string
+        priority:
+          type: string
+          enum: [low, medium, high]
+        assignedTo:
+          type: string
+          format: email
+
+    TicketComment:
+      type: object
+      required:
+        - ticketId
+        - content
+      properties:
+        id:
+          type: string
+          format: uuid
+        ticketId:
+          type: string
+          format: uuid
+        content:
+          type: string
+        authorEmail:
+          type: string
+          format: email
+
+    CreateTicketCommentInput:
+      type: object
+      required:
+        - ticketId
+        - content
+      properties:
+        ticketId:
+          type: string
+          format: uuid
+        content:
+          type: string
+        authorEmail:
+          type: string
+          format: email
+
+    # ==========================================
+    # Form Schemas
+    # ==========================================
+
+    FormName:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    CreateFormSubmissionInput:
+      type: object
+      required:
+        - formName
+        - fields
+      properties:
+        formName:
+          type: string
+          description: Name of the form to submit to
+        fields:
+          type: object
+          additionalProperties: true
+          description: Form field values as key-value pairs
+
+    # ==========================================
+    # File Schemas
+    # ==========================================
+
+    AttachFileFromUrlInput:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          format: uri
+          description: URL of the file to attach
+        fileName:
+          type: string
+          description: Override filename
+        clientName:
+          type: string
+        projectName:
+          type: string
+        entityType:
+          type: string
+          description: Type of entity to attach to
+        entityId:
+          type: string
+          format: uuid
+          description: ID of entity to attach to
+
+    # ==========================================
+    # Calendar Schemas
+    # ==========================================
+
+    CalendarEvent:
+      type: object
+      required:
+        - title
+        - startTime
+        - endTime
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        location:
+          type: string
+        clientName:
+          type: string
+        projectName:
+          type: string
+        attendees:
+          type: array
+          items:
+            type: string
+            format: email
+
+    CreateCalendarEventInput:
+      type: object
+      required:
+        - title
+        - startTime
+        - endTime
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        location:
+          type: string
+        clientName:
+          type: string
+        projectName:
+          type: string
+        attendees:
+          type: array
+          items:
+            type: string
+            format: email
+
+    UpdateCalendarEventInput:
+      type: object
+      required:
+        - eventId
+      properties:
+        eventId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        location:
+          type: string
+        clientName:
+          type: string
+        projectName:
+          type: string
+        attendees:
+          type: array
+          items:
+            type: string
+            format: email
+
+    DeleteCalendarEventInput:
+      type: object
+      required:
+        - eventId
+      properties:
+        eventId:
+          type: string
+          format: uuid
+
+    # ==========================================
+    # Deliverable Schemas
+    # ==========================================
+
+    ApproveDeliverableInput:
+      type: object
+      required:
+        - deliverableId
+      properties:
+        deliverableId:
+          type: string
+          format: uuid
+        projectName:
+          type: string
+        clientName:
+          type: string
+
+    # ==========================================
+    # Template & Reference Schemas
+    # ==========================================
+
+    EmailTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+
+    InvoiceTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    VendorName:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+
+    WorkspaceUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        firstName:
+          type: string
+        lastName:
+          type: string
+        role:
+          type: string
+
+    # ==========================================
+    # Error Schema
+    # ==========================================
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        code:
+          type: string
+          description: Error code
+        details:
+          type: object
+          additionalProperties: true
+
+  responses:
+    UnauthorizedError:
+      description: API key is missing or invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Unauthorized"
+            code: "UNAUTHORIZED"
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimitError:
+      description: Rate limit exceeded (100 requests per 5 minutes)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Rate limit exceeded"
+            code: "RATE_LIMIT_EXCEEDED"
+
+paths:
+  # ==========================================
+  # Client Endpoints
+  # ==========================================
+
+  /action/clients/list:
+    get:
+      tags:
+        - Clients
+      summary: List all clients
+      description: Retrieves a list of all clients in the workspace
+      operationId: listClients
+      responses:
+        '200':
+          description: List of clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/clients/search:
+    get:
+      tags:
+        - Clients
+      summary: Search clients
+      description: Search for clients by name or other criteria
+      operationId: searchClients
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Search query string
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Client'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/clients/create:
+    post:
+      tags:
+        - Clients
+      summary: Create a new client
+      description: Creates a new client in the workspace
+      operationId: createClient
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateClientInput'
+      responses:
+        '200':
+          description: Created client
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Client'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  # ==========================================
+  # Contact Endpoints
+  # ==========================================
+
+  /action/contacts/search:
+    get:
+      tags:
+        - Contacts
+      summary: Search contacts
+      description: Search for contacts by name or email
+      operationId: searchContacts
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Search query string
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching contacts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contact'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/contacts/create:
+    post:
+      tags:
+        - Contacts
+      summary: Create a new contact
+      description: Creates a new contact for an existing client
+      operationId: createContact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContactInput'
+      responses:
+        '200':
+          description: Created contact
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  # ==========================================
+  # Project Endpoints
+  # ==========================================
+
+  /action/projects/search:
+    get:
+      tags:
+        - Projects
+      summary: Search projects
+      description: Search for projects by name
+      operationId: searchProjects
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: Search query string
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/projects/create:
+    post:
+      tags:
+        - Projects
+      summary: Create a new project
+      description: Creates a new project for an existing client
+      operationId: createProject
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectInput'
+      responses:
+        '200':
+          description: Created project
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/projects/taskStages/list:
+    get:
+      tags:
+        - Projects
+      summary: List project task stages
+      description: Retrieves all task stages configured for projects
+      operationId: listProjectTaskStages
+      responses:
+        '200':
+          description: List of task stages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectTaskStage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  # ==========================================
+  # Invoice Endpoints
+  # ==========================================
+
+  /action/invoices/search:
+    get:
+      tags:
+        - Invoices
+      summary: Search payable invoices
+      description: Search for invoices that are payable
+      operationId: searchPayableInvoices
+      parameters:
+        - name: query
+          in: query
+          required: false
+          description: Optional search query
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          description: Filter by invoice status
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching invoices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Invoice'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/invoices/create:
+    post:
+      tags:
+        - Invoices
+      summary: Create a new invoice
+      description: |
+        Creates a new invoice for an existing client.
+        Omit the `sendTo` object to create a draft invoice.
+      operationId: createInvoice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInvoiceInput'
+      responses:
+        '200':
+          description: Created invoice
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/invoices/applyPayment:
+    post:
+      tags:
+        - Invoices
+      summary: Apply payment to invoice
+      description: Records a payment against an existing invoice
+      operationId: applyPayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyPaymentInput'
+      responses:
+        '200':
+          description: Payment applied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invoice'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  # ==========================================
+  # Task Endpoints
+  # ==========================================
+
+  /action/tasks/create:
+    post:
+      tags:
+        - Tasks
+      summary: Create a new task
+      description: Creates a new task within a project
+      operationId: createTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskInput'
+      responses:
+        '200':
+          description: Created task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  # ==========================================
+  # Time Entry Endpoints
+  # ==========================================
+
+  /action/timeWorked/create:
+    post:
+      tags:
+        - Time Tracking
+      summary: Create a time entry
+      description: |
+        Records a time entry for a user.
+        Can optionally auto-create client, project, or deliverable if they don't exist.
+      operationId: createTimeEntry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTimeEntryInput'
+      responses:
+        '200':
+          description: Created time entry
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeEntry'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  # ==========================================
+  # Expense Endpoints
+  # ==========================================
+
+  /action/expenses/create:
+    post:
+      tags:
+        - Expenses
+      summary: Create an expense
+      description: Records a new expense
+      operationId: createExpense
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateExpenseInput'
+      responses:
+        '200':
+          description: Created expense
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Expense'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  # ==========================================
+  # Opportunity Endpoints
+  # ==========================================
+
+  /action/opportunities/create:
+    post:
+      tags:
+        - Opportunities
+      summary: Create an opportunity
+      description: Creates a new sales opportunity in the pipeline
+      operationId: createOpportunity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOpportunityInput'
+      responses:
+        '200':
+          description: Created opportunity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Opportunity'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/pipeline/stages/list:
+    get:
+      tags:
+        - Opportunities
+      summary: List pipeline stages
+      description: Retrieves all configured pipeline stages
+      operationId: listPipelineStages
+      responses:
+        '200':
+          description: List of pipeline stages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PipelineStage'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  # ==========================================
+  # Ticket Endpoints
+  # ==========================================
+
+  /action/tickets/create:
+    post:
+      tags:
+        - Tickets
+      summary: Create a ticket
+      description: Creates a new support ticket
+      operationId: createTicket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTicketInput'
+      responses:
+        '200':
+          description: Created ticket
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/tickets/comment/create:
+    post:
+      tags:
+        - Tickets
+      summary: Add comment to ticket
+      description: Adds a comment to an existing ticket
+      operationId: createTicketComment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTicketCommentInput'
+      responses:
+        '200':
+          description: Created comment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketComment'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  # ==========================================
+  # Form Endpoints
+  # ==========================================
+
+  /action/forms/list:
+    get:
+      tags:
+        - Forms
+      summary: List form names
+      description: Retrieves all available form names
+      operationId: listFormNames
+      responses:
+        '200':
+          description: List of form names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FormName'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/forms/submit:
+    post:
+      tags:
+        - Forms
+      summary: Submit form data
+      description: Creates a form submission
+      operationId: createFormSubmission
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFormSubmissionInput'
+      responses:
+        '200':
+          description: Form submitted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  submissionId:
+                    type: string
+                    format: uuid
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  # ==========================================
+  # File Endpoints
+  # ==========================================
+
+  /action/files/attach:
+    post:
+      tags:
+        - Files
+      summary: Attach file (multipart)
+      description: Uploads and attaches a file using multipart form data
+      operationId: attachFileMultipart
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: File to upload
+                clientName:
+                  type: string
+                projectName:
+                  type: string
+                entityType:
+                  type: string
+                entityId:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          description: File attached successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  fileId:
+                    type: string
+                    format: uuid
+                  fileName:
+                    type: string
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/files/attachFromUrl:
+    post:
+      tags:
+        - Files
+      summary: Attach file from URL
+      description: Attaches a file by downloading from a URL
+      operationId: attachFileFromUrl
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttachFileFromUrlInput'
+      responses:
+        '200':
+          description: File attached successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  fileId:
+                    type: string
+                    format: uuid
+                  fileName:
+                    type: string
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  # ==========================================
+  # Calendar Endpoints
+  # ==========================================
+
+  /action/calendar/create:
+    post:
+      tags:
+        - Calendar
+      summary: Create calendar event
+      description: Creates a new calendar event
+      operationId: createCalendarEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCalendarEventInput'
+      responses:
+        '200':
+          description: Created calendar event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarEvent'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/calendar/update:
+    post:
+      tags:
+        - Calendar
+      summary: Update calendar event
+      description: Updates an existing calendar event
+      operationId: updateCalendarEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCalendarEventInput'
+      responses:
+        '200':
+          description: Updated calendar event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CalendarEvent'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/calendar/delete:
+    delete:
+      tags:
+        - Calendar
+      summary: Delete calendar event
+      description: Deletes a calendar event
+      operationId: deleteCalendarEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteCalendarEventInput'
+      responses:
+        '200':
+          description: Event deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  # ==========================================
+  # Deliverable Endpoints
+  # ==========================================
+
+  /action/deliverables/approve:
+    post:
+      tags:
+        - Deliverables
+      summary: Approve a deliverable
+      description: Marks a deliverable as approved
+      operationId: approveDeliverable
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApproveDeliverableInput'
+      responses:
+        '200':
+          description: Deliverable approved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  # ==========================================
+  # Template & Reference Endpoints
+  # ==========================================
+
+  /action/templates/email/list:
+    get:
+      tags:
+        - Templates
+      summary: List email templates
+      description: Retrieves all email templates
+      operationId: listEmailTemplates
+      responses:
+        '200':
+          description: List of email templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmailTemplate'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/templates/invoice/list:
+    get:
+      tags:
+        - Templates
+      summary: List invoice templates
+      description: Retrieves all invoice templates
+      operationId: listInvoiceTemplates
+      responses:
+        '200':
+          description: List of invoice templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InvoiceTemplate'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/vendors/list:
+    get:
+      tags:
+        - Reference Data
+      summary: List vendor names
+      description: Retrieves all vendor names for expense tracking
+      operationId: listVendorNames
+      responses:
+        '200':
+          description: List of vendor names
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VendorName'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/users/list:
+    get:
+      tags:
+        - Reference Data
+      summary: List workspace users
+      description: Retrieves all users in the workspace
+      operationId: listWorkspaceUsers
+      responses:
+        '200':
+          description: List of workspace users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkspaceUser'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+tags:
+  - name: Clients
+    description: Client management operations
+  - name: Contacts
+    description: Contact management operations
+  - name: Projects
+    description: Project management operations
+  - name: Invoices
+    description: Invoice and billing operations
+  - name: Tasks
+    description: Task management operations
+  - name: Time Tracking
+    description: Time entry operations
+  - name: Expenses
+    description: Expense tracking operations
+  - name: Opportunities
+    description: Sales pipeline and opportunity operations
+  - name: Tickets
+    description: Support ticket operations
+  - name: Forms
+    description: Form submission operations
+  - name: Files
+    description: File attachment operations
+  - name: Calendar
+    description: Calendar event operations
+  - name: Deliverables
+    description: Deliverable management operations
+  - name: Templates
+    description: Email and invoice template operations
+  - name: Reference Data
+    description: Reference data lookups (vendors, users)

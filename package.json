@@ -1,0 +1,56 @@
+{
+  "name": "withmoxie-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Moxie CRM integration - manage clients, contacts, projects, invoices, time tracking, and more",
+  "type": "module",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "bin": {
+    "withmoxie-mcp-server": "./build/index.js"
+  },
+  "files": [
+    "build"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "rm -rf build && tsc && chmod 755 build/index.js",
+    "dev": "tsx watch src/index.ts",
+    "lint": "eslint . --ext .ts",
+    "test": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "moxie",
+    "crm",
+    "client-management",
+    "invoicing",
+    "time-tracking",
+    "project-management",
+    "ai",
+    "claude",
+    "llm"
+  ],
+  "author": "flyingwebie",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flyingwebie/withmoxie-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/flyingwebie/withmoxie-mcp-server/issues"
+  },
+  "homepage": "https://github.com/flyingwebie/withmoxie-mcp-server#readme",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.9.0",
+    "axios": "^1.8.4",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  }
+}
