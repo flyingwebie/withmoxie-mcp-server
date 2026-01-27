@@ -49,8 +49,8 @@ Add to `~/.claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "moxie": {
-      "command": "node",
-      "args": ["/path/to/withmoxie-mcp-server/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "withmoxie-mcp-server"],
       "env": {
         "MOXIE_BASE_URL": "https://pod01.withmoxie.com/api/public",
         "MOXIE_API_KEY": "your_api_key_here"
@@ -69,8 +69,8 @@ Add to `~/.claude/claude_desktop_config.json`:
 {
   "mcpServers": {
     "moxie": {
-      "command": "node",
-      "args": ["/path/to/withmoxie-mcp-server/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "withmoxie-mcp-server"],
       "env": {
         "MOXIE_BASE_URL": "https://pod01.withmoxie.com/api/public",
         "MOXIE_API_KEY": "your_api_key_here"
@@ -88,8 +88,8 @@ Add to `.cursor/mcp.json` in your project root:
 {
   "mcpServers": {
     "moxie": {
-      "command": "node",
-      "args": ["/path/to/withmoxie-mcp-server/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "withmoxie-mcp-server"],
       "env": {
         "MOXIE_BASE_URL": "https://pod01.withmoxie.com/api/public",
         "MOXIE_API_KEY": "your_api_key_here"
@@ -107,8 +107,8 @@ Add to your VS Code `settings.json`:
 {
   "cline.mcpServers": {
     "moxie": {
-      "command": "node",
-      "args": ["/path/to/withmoxie-mcp-server/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "withmoxie-mcp-server"],
       "env": {
         "MOXIE_BASE_URL": "https://pod01.withmoxie.com/api/public",
         "MOXIE_API_KEY": "your_api_key_here"
@@ -126,8 +126,8 @@ Add to your Windsurf MCP configuration:
 {
   "mcpServers": {
     "moxie": {
-      "command": "node",
-      "args": ["/path/to/withmoxie-mcp-server/build/index.js"],
+      "command": "npx",
+      "args": ["-y", "withmoxie-mcp-server"],
       "env": {
         "MOXIE_BASE_URL": "https://pod01.withmoxie.com/api/public",
         "MOXIE_API_KEY": "your_api_key_here"
@@ -140,7 +140,7 @@ Add to your Windsurf MCP configuration:
 ### MCP Inspector (Testing)
 
 ```bash
-MOXIE_API_KEY=your_key MOXIE_BASE_URL=https://pod01.withmoxie.com/api/public npx @modelcontextprotocol/inspector node build/index.js
+MOXIE_API_KEY=your_key MOXIE_BASE_URL=https://pod01.withmoxie.com/api/public npx @modelcontextprotocol/inspector npx -y withmoxie-mcp-server
 ```
 
 ## Example Prompts
@@ -219,109 +219,109 @@ Once configured, you can use natural language to interact with Moxie:
 
 ### Client Tools (3)
 
-| Tool | Description |
-| ---- | ----------- |
-| `list_clients` | List all clients in your Moxie workspace |
-| `search_clients` | Search for clients by name or contact information |
-| `create_client` | Create a new client with contacts and payment terms |
+| Tool             | Description                                         |
+| ---------------- | --------------------------------------------------- |
+| `list_clients`   | List all clients in your Moxie workspace            |
+| `search_clients` | Search for clients by name or contact information   |
+| `create_client`  | Create a new client with contacts and payment terms |
 
 ### Contact Tools (2)
 
-| Tool | Description |
-| ---- | ----------- |
-| `search_contacts` | Search for contacts by name, email, or phone |
-| `create_contact` | Create a new contact associated with a client |
+| Tool              | Description                                   |
+| ----------------- | --------------------------------------------- |
+| `search_contacts` | Search for contacts by name, email, or phone  |
+| `create_contact`  | Create a new contact associated with a client |
 
 ### Project Tools (3)
 
-| Tool | Description |
-| ---- | ----------- |
-| `search_projects` | Search projects, optionally filtered by client |
-| `create_project` | Create a new project for a client |
-| `list_project_task_stages` | List all available task stages |
+| Tool                       | Description                                    |
+| -------------------------- | ---------------------------------------------- |
+| `search_projects`          | Search projects, optionally filtered by client |
+| `create_project`           | Create a new project for a client              |
+| `list_project_task_stages` | List all available task stages                 |
 
 ### Invoice Tools (3)
 
-| Tool | Description |
-| ---- | ----------- |
-| `search_payable_invoices` | Search for invoices in your workspace |
-| `create_invoice` | Create a new invoice with line items |
-| `apply_payment` | Apply a payment to an existing invoice |
+| Tool                      | Description                            |
+| ------------------------- | -------------------------------------- |
+| `search_payable_invoices` | Search for invoices in your workspace  |
+| `create_invoice`          | Create a new invoice with line items   |
+| `apply_payment`           | Apply a payment to an existing invoice |
 
 ### Task Tools (1)
 
-| Tool | Description |
-| ---- | ----------- |
+| Tool          | Description                                |
+| ------------- | ------------------------------------------ |
 | `create_task` | Create a new task/deliverable in a project |
 
 ### Time Entry Tools (1)
 
-| Tool | Description |
-| ---- | ----------- |
+| Tool                | Description                                     |
+| ------------------- | ----------------------------------------------- |
 | `create_time_entry` | Create a time entry with optional auto-creation |
 
 ### Expense Tools (1)
 
-| Tool | Description |
-| ---- | ----------- |
+| Tool             | Description                 |
+| ---------------- | --------------------------- |
 | `create_expense` | Create a new expense record |
 
 ### Opportunity Tools (2)
 
-| Tool | Description |
-| ---- | ----------- |
+| Tool                   | Description                                |
+| ---------------------- | ------------------------------------------ |
 | `list_pipeline_stages` | List all pipeline stages for opportunities |
-| `create_opportunity` | Create a new sales opportunity |
+| `create_opportunity`   | Create a new sales opportunity             |
 
 ### Ticket Tools (2)
 
-| Tool | Description |
-| ---- | ----------- |
-| `create_ticket` | Create a new support ticket |
+| Tool                    | Description                         |
+| ----------------------- | ----------------------------------- |
+| `create_ticket`         | Create a new support ticket         |
 | `create_ticket_comment` | Add a comment to an existing ticket |
 
 ### Form Tools (2)
 
-| Tool | Description |
-| ---- | ----------- |
-| `list_form_names` | List all available forms |
+| Tool                     | Description                     |
+| ------------------------ | ------------------------------- |
+| `list_form_names`        | List all available forms        |
 | `create_form_submission` | Submit a form with field values |
 
 ### File Tools (1)
 
-| Tool | Description |
-| ---- | ----------- |
+| Tool                   | Description                                |
+| ---------------------- | ------------------------------------------ |
 | `attach_file_from_url` | Attach a file from a URL to a Moxie record |
 
 ### Calendar Tools (3)
 
-| Tool | Description |
-| ---- | ----------- |
-| `create_calendar_event` | Create a new calendar event |
+| Tool                    | Description                       |
+| ----------------------- | --------------------------------- |
+| `create_calendar_event` | Create a new calendar event       |
 | `update_calendar_event` | Update an existing calendar event |
-| `delete_calendar_event` | Delete a calendar event |
+| `delete_calendar_event` | Delete a calendar event           |
 
 ### Deliverable Tools (1)
 
-| Tool | Description |
-| ---- | ----------- |
+| Tool                  | Description                             |
+| --------------------- | --------------------------------------- |
 | `approve_deliverable` | Approve a deliverable/task in a project |
 
 ### Template & Reference Tools (4)
 
-| Tool | Description |
-| ---- | ----------- |
-| `list_email_templates` | List all email templates |
-| `list_invoice_templates` | List all invoice templates |
-| `list_vendor_names` | List all vendor names for expenses |
-| `list_workspace_users` | List all users in your workspace |
+| Tool                     | Description                        |
+| ------------------------ | ---------------------------------- |
+| `list_email_templates`   | List all email templates           |
+| `list_invoice_templates` | List all invoice templates         |
+| `list_vendor_names`      | List all vendor names for expenses |
+| `list_workspace_users`   | List all users in your workspace   |
 
 ## Configuration
 
-| Variable | Required | Description |
-| -------- | -------- | ----------- |
-| `MOXIE_API_KEY` | Yes | Your Moxie API key |
-| `MOXIE_BASE_URL` | Yes | Your Moxie API base URL (e.g., `https://pod01.withmoxie.com/api/public`) |
+| Variable         | Required | Description                                                              |
+| ---------------- | -------- | ------------------------------------------------------------------------ |
+| `MOXIE_API_KEY`  | Yes      | Your Moxie API key                                                       |
+| `MOXIE_BASE_URL` | Yes      | Your Moxie API base URL (e.g., `https://pod01.withmoxie.com/api/public`) |
 
 ### Finding Your Base URL
 
@@ -343,7 +343,7 @@ npm run build
 npm run dev
 
 # Test with MCP Inspector
-MOXIE_API_KEY=your_key MOXIE_BASE_URL=your_url npx @modelcontextprotocol/inspector node build/index.js
+MOXIE_API_KEY=your_key MOXIE_BASE_URL=your_url npx @modelcontextprotocol/inspector npx -y withmoxie-mcp-server
 ```
 
 ## Project Structure
@@ -387,11 +387,11 @@ Moxie has a rate limit of **100 requests per 5 minutes**. If exceeded, you'll re
 
 The server provides actionable error messages for common issues:
 
-| Code | Description | Solution |
-| ---- | ----------- | -------- |
-| 401 | Unauthorized | Check your `MOXIE_API_KEY` |
-| 404 | Resource not found | Verify the resource exists (exact name matching required) |
-| 429 | Rate limit exceeded | Wait and retry (100 requests per 5 minutes) |
+| Code | Description         | Solution                                                  |
+| ---- | ------------------- | --------------------------------------------------------- |
+| 401  | Unauthorized        | Check your `MOXIE_API_KEY`                                |
+| 404  | Resource not found  | Verify the resource exists (exact name matching required) |
+| 429  | Rate limit exceeded | Wait and retry (100 requests per 5 minutes)               |
 
 ### Important Notes
 
