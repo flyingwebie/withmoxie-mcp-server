@@ -36,6 +36,16 @@ export function registerProjectTools(server: McpServer) {
         };
       } catch (error: unknown) {
         const message = error instanceof Error ? error.message : String(error);
+        if (query && message.includes('Resource not found')) {
+          return {
+            content: [
+              {
+                type: 'text',
+                text: `No projects found for client: "${query}". The query must match an exact client name.`,
+              },
+            ],
+          };
+        }
         return {
           content: [
             { type: 'text', text: `Failed to search projects: ${message}` },
@@ -210,7 +220,7 @@ export function registerProjectTools(server: McpServer) {
       try {
         const client = getMoxieClient();
         const stages = await client.get<ProjectTaskStage[]>(
-          '/action/projects/taskStages/list'
+          '/action/taskStages/list'
         );
         return {
           content: [

@@ -14,7 +14,7 @@ export function registerInvoiceTools(server: McpServer) {
       try {
         const client = getMoxieClient();
         const params = query ? { query } : undefined;
-        const invoices = await client.get<Invoice[]>("/action/invoices/search", params);
+        const invoices = await client.get<Invoice[]>("/action/payableInvoices/search", params);
         return {
           content: [
             {

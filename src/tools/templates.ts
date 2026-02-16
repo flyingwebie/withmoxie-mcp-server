@@ -10,7 +10,7 @@ export function registerTemplateTools(server: McpServer) {
     async () => {
       try {
         const client = getMoxieClient();
-        const templates = await client.get<EmailTemplate[]>("/action/templates/email/list");
+        const templates = await client.get<EmailTemplate[]>("/action/emailTemplates/list");
         return {
           content: [
             {
@@ -36,7 +36,7 @@ export function registerTemplateTools(server: McpServer) {
     async () => {
       try {
         const client = getMoxieClient();
-        const templates = await client.get<InvoiceTemplate[]>("/action/templates/invoice/list");
+        const templates = await client.get<InvoiceTemplate[]>("/action/invoiceTemplates/list");
         return {
           content: [
             {

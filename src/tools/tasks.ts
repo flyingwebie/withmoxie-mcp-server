@@ -5,42 +5,6 @@ import type { Task, CreateTaskInput } from "../types/moxie.js";
 
 export function registerTaskTools(server: McpServer) {
   server.tool(
-    "search_tasks",
-    "Search for tasks in your Moxie workspace, optionally filtered by project or client name. Note: This endpoint follows the Moxie API convention but may not be officially documented.",
-    {
-      query: z.string().optional().describe("Search query to filter tasks"),
-      projectName: z.string().optional().describe("Filter tasks by exact project name"),
-      clientName: z.string().optional().describe("Filter tasks by exact client name"),
-    },
-    async (params) => {
-      try {
-        const client = getMoxieClient();
-
-        const queryParams: Record<string, string> = {};
-        if (params.query) queryParams.query = params.query;
-        if (params.projectName) queryParams.projectName = params.projectName;
-        if (params.clientName) queryParams.clientName = params.clientName;
-
-        const tasks = await client.get<Task[]>("/action/tasks/search", queryParams);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify(tasks, null, 2),
-            },
-          ],
-        };
-      } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [{ type: "text", text: `Failed to search tasks: ${message}` }],
-          isError: true,
-        };
-      }
-    }
-  );
-
-  server.tool(
     "create_task",
     "Create a new task/deliverable in a project",
     {
@@ -101,35 +65,6 @@ export function registerTaskTools(server: McpServer) {
         const message = error instanceof Error ? error.message : String(error);
         return {
           content: [{ type: "text", text: `Failed to create task: ${message}` }],
-          isError: true,
-        };
-      }
-    }
-  );
-
-  server.tool(
-    "delete_task",
-    "Delete a task from a project. Note: This endpoint follows the Moxie API convention but may not be officially documented.",
-    {
-      taskId: z.string().describe("ID of the task to delete"),
-    },
-    async (params) => {
-      try {
-        const client = getMoxieClient();
-
-        await client.delete<void>(`/action/tasks/delete?taskId=${params.taskId}`);
-        return {
-          content: [
-            {
-              type: "text",
-              text: `Successfully deleted task ${params.taskId}`,
-            },
-          ],
-        };
-      } catch (error: unknown) {
-        const message = error instanceof Error ? error.message : String(error);
-        return {
-          content: [{ type: "text", text: `Failed to delete task: ${message}` }],
           isError: true,
         };
       }

@@ -11,7 +11,7 @@ An MCP (Model Context Protocol) server that enables LLMs to interact with [Moxie
 - **Client Management**: List, search, and create clients with full contact information
 - **Contact Management**: Search and create contacts associated with clients
 - **Project Management**: Search projects, create/update projects, and manage task stages
-- **Task Management**: Search, create, and delete tasks with subtasks, custom fields, and multi-assignee support
+- **Task Management**: Create tasks with subtasks, custom fields, and multi-assignee support
 - **Invoice Operations**: Search invoices, create new invoices, and apply payments
 - **Time Tracking**: Create time entries with optional auto-creation of clients/projects
 - **Expense Tracking**: Record and categorize business expenses
@@ -198,11 +198,7 @@ Once configured, you can use natural language to interact with Moxie:
 
 ### Task Management
 
-> "Search for all tasks in project 'Website Redesign'"
-
 > "Create a task called 'Design Homepage' in project 'Website Redesign' for client 'Acme Corp' with subtasks 'Header', 'Footer', 'Hero Section'"
-
-> "Delete task ID abc123"
 
 ### Support Tickets
 
@@ -258,13 +254,11 @@ Once configured, you can use natural language to interact with Moxie:
 | `create_invoice`          | Create a new invoice with line items   |
 | `apply_payment`           | Apply a payment to an existing invoice |
 
-### Task Tools (3)
+### Task Tools (1)
 
-| Tool           | Description                                                                   |
-| -------------- | ----------------------------------------------------------------------------- |
-| `search_tasks` | Search for tasks, optionally filtered by project or client name               |
-| `create_task`  | Create a task with subtasks, multi-assignee, custom fields, and numeric priority |
-| `delete_task`  | Delete a task by ID                                                           |
+| Tool          | Description                                                                      |
+| ------------- | -------------------------------------------------------------------------------- |
+| `create_task` | Create a task with subtasks, multi-assignee, custom fields, and numeric priority |
 
 ### Time Entry Tools (1)
 
@@ -412,7 +406,13 @@ The server provides actionable error messages for common issues:
 - **Auto-Creation**: Time entries support auto-creation of clients, projects, and deliverables via boolean flags.
 - **Tickets Require Contact Email**: The `create_ticket` tool requires `userEmail` to be an existing contact in your workspace. The ticket will be rejected if the email is not found.
 - **Form Submissions Create Opportunities**: Use `create_form_submission` with `pipelineStageName` to automatically create pipeline opportunities from lead data.
-- **Speculative Endpoints**: The `search_tasks`, `delete_task`, and `create_opportunity` tools use endpoints that follow the Moxie API convention but may not be officially documented. Test them against your workspace.
+- **Speculative Endpoints**: The `create_opportunity` and `update_project` tools use endpoints that follow the Moxie API convention but may not be officially documented. Test them against your workspace.
+
+### Known Limitations
+
+- **No Task/Deliverable Listing**: The Moxie Public API does not expose any endpoint to list, search, or retrieve tasks (deliverables) for a project. Tasks can only be **created** (`create_task`) and **approved** (`approve_deliverable`), but not read back via the API.
+- **Empty Deliverables in Projects**: The `deliverables` array returned by `search_projects` is always empty by design — Moxie does not populate it in API responses.
+- **Task Data via Webhooks Only**: To track task changes, use Moxie's webhook events (`DeliverableCreate`, `DeliverableUpdate`, `DeliverableDelete`) which include the full task payload.
 
 ## License
 

@@ -1,6 +1,6 @@
 {
   "name": "withmoxie-mcp-server",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "description": "MCP server for Moxie CRM integration - manage clients, contacts, projects, invoices, time tracking, and more",
   "type": "module",
   "main": "build/index.js",
@@ -17,6 +17,7 @@
   "scripts": {
     "build": "rm -rf build && tsc && chmod 755 build/index.js",
     "dev": "tsx watch src/index.ts",
+    "inspect": "npx @modelcontextprotocol/inspector node build/index.js",
     "lint": "eslint . --ext .ts",
     "test": "npm run build"
   },

@@ -11,7 +11,7 @@ export function registerOpportunityTools(server: McpServer) {
     async () => {
       try {
         const client = getMoxieClient();
-        const stages = await client.get<PipelineStage[]>("/action/pipeline/stages/list");
+        const stages = await client.get<PipelineStage[]>("/action/pipelineStages/list");
         return {
           content: [
             {

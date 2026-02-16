@@ -708,15 +708,6 @@ components:
             type: string
           description: Map of custom field names to values (keys must match project settings)
 
-    DeleteTaskInput:
-      type: object
-      required:
-        - taskId
-      properties:
-        taskId:
-          type: string
-          format: uuid
-          description: ID of the task to delete
 
     # ==========================================
     # Time Entry Schemas
@@ -1572,7 +1563,7 @@ paths:
         '429':
           $ref: '#/components/responses/RateLimitError'
 
-  /action/projects/taskStages/list:
+  /action/taskStages/list:
     get:
       tags:
         - Projects
@@ -1597,7 +1588,7 @@ paths:
   # Invoice Endpoints
   # ==========================================
 
-  /action/invoices/search:
+  /action/payableInvoices/search:
     get:
       tags:
         - Invoices
@@ -1691,48 +1682,6 @@ paths:
   # Task Endpoints
   # ==========================================
 
-  /action/tasks/search:
-    get:
-      tags:
-        - Tasks
-      summary: Search tasks
-      description: |
-        Search for tasks in the workspace. Note: This endpoint follows the Moxie API
-        convention but may not be officially documented.
-      operationId: searchTasks
-      parameters:
-        - name: query
-          in: query
-          required: false
-          description: Search query string
-          schema:
-            type: string
-        - name: projectName
-          in: query
-          required: false
-          description: Filter by exact project name
-          schema:
-            type: string
-        - name: clientName
-          in: query
-          required: false
-          description: Filter by exact client name
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Matching tasks
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Task'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
   /action/tasks/create:
     post:
       tags:
@@ -1753,40 +1702,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Task'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/tasks/delete:
-    delete:
-      tags:
-        - Tasks
-      summary: Delete a task
-      description: |
-        Deletes a task from a project. Note: This endpoint follows the Moxie API
-        convention but may not be officially documented.
-      operationId: deleteTask
-      parameters:
-        - name: taskId
-          in: query
-          required: true
-          description: ID of the task to delete
-          schema:
-            type: string
-            format: uuid
-      responses:
-        '200':
-          description: Task deleted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '404':
@@ -1883,7 +1798,7 @@ paths:
         '429':
           $ref: '#/components/responses/RateLimitError'
 
-  /action/pipeline/stages/list:
+  /action/pipelineStages/list:
     get:
       tags:
         - Opportunities
@@ -1966,7 +1881,7 @@ paths:
   # Form Endpoints
   # ==========================================
 
-  /action/forms/list:
+  /action/formNames/list:
     get:
       tags:
         - Forms
@@ -2232,7 +2147,7 @@ paths:
   # Template & Reference Endpoints
   # ==========================================
 
-  /action/templates/email/list:
+  /action/emailTemplates/list:
     get:
       tags:
         - Templates
@@ -2253,7 +2168,7 @@ paths:
         '429':
           $ref: '#/components/responses/RateLimitError'
 
-  /action/templates/invoice/list:
+  /action/invoiceTemplates/list:
     get:
       tags:
         - Templates

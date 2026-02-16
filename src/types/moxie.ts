@@ -233,9 +233,6 @@ export interface CreateTaskInput {
   customValues?: Record<string, string>;
 }
 
-export interface DeleteTaskInput {
-  taskId: string;
-}
 
 // ============================================
 // Time Entry Types

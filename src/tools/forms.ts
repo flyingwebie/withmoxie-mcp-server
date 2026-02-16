@@ -11,7 +11,7 @@ export function registerFormTools(server: McpServer) {
     async () => {
       try {
         const client = getMoxieClient();
-        const forms = await client.get<FormName[]>("/action/forms/list");
+        const forms = await client.get<FormName[]>("/action/formNames/list");
         return {
           content: [
             {
