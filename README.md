@@ -10,14 +10,15 @@ An MCP (Model Context Protocol) server that enables LLMs to interact with [Moxie
 
 - **Client Management**: List, search, and create clients with full contact information
 - **Contact Management**: Search and create contacts associated with clients
-- **Project Management**: Search projects, create new projects, and manage task stages
+- **Project Management**: Search projects, create/update projects, and manage task stages
+- **Task Management**: Search, create, and delete tasks with subtasks, custom fields, and multi-assignee support
 - **Invoice Operations**: Search invoices, create new invoices, and apply payments
 - **Time Tracking**: Create time entries with optional auto-creation of clients/projects
 - **Expense Tracking**: Record and categorize business expenses
 - **Sales Pipeline**: Create opportunities and manage pipeline stages
-- **Support Tickets**: Create tickets and add comments
+- **Support Tickets**: Create tickets with structured form data and add comments
 - **Calendar Events**: Create, update, and delete calendar events
-- **Form Submissions**: List forms and submit form data
+- **Form Submissions**: Submit lead capture forms with pipeline opportunity creation
 - **File Attachments**: Attach files from URLs to various entities
 - **Templates**: Access email and invoice templates, vendor names, and workspace users
 
@@ -195,9 +196,17 @@ Once configured, you can use natural language to interact with Moxie:
 
 > "Create a new opportunity called 'Enterprise Deal' worth $50,000"
 
+### Task Management
+
+> "Search for all tasks in project 'Website Redesign'"
+
+> "Create a task called 'Design Homepage' in project 'Website Redesign' for client 'Acme Corp' with subtasks 'Header', 'Footer', 'Hero Section'"
+
+> "Delete task ID abc123"
+
 ### Support Tickets
 
-> "Create a support ticket with subject 'Login Issue' for client 'Acme Corp'"
+> "Create a support ticket for contact john@acme.com with ticket type 'Support Request' and comment 'Login page is broken'"
 
 > "Add a comment to ticket ID xyz789"
 
@@ -232,12 +241,13 @@ Once configured, you can use natural language to interact with Moxie:
 | `search_contacts` | Search for contacts by name, email, or phone  |
 | `create_contact`  | Create a new contact associated with a client |
 
-### Project Tools (3)
+### Project Tools (4)
 
 | Tool                       | Description                                    |
 | -------------------------- | ---------------------------------------------- |
 | `search_projects`          | Search projects, optionally filtered by client |
 | `create_project`           | Create a new project for a client              |
+| `update_project`           | Update an existing project's details           |
 | `list_project_task_stages` | List all available task stages                 |
 
 ### Invoice Tools (3)
@@ -248,11 +258,13 @@ Once configured, you can use natural language to interact with Moxie:
 | `create_invoice`          | Create a new invoice with line items   |
 | `apply_payment`           | Apply a payment to an existing invoice |
 
-### Task Tools (1)
+### Task Tools (3)
 
-| Tool          | Description                                |
-| ------------- | ------------------------------------------ |
-| `create_task` | Create a new task/deliverable in a project |
+| Tool           | Description                                                                   |
+| -------------- | ----------------------------------------------------------------------------- |
+| `search_tasks` | Search for tasks, optionally filtered by project or client name               |
+| `create_task`  | Create a task with subtasks, multi-assignee, custom fields, and numeric priority |
+| `delete_task`  | Delete a task by ID                                                           |
 
 ### Time Entry Tools (1)
 
@@ -275,17 +287,17 @@ Once configured, you can use natural language to interact with Moxie:
 
 ### Ticket Tools (2)
 
-| Tool                    | Description                         |
-| ----------------------- | ----------------------------------- |
-| `create_ticket`         | Create a new support ticket         |
-| `create_ticket_comment` | Add a comment to an existing ticket |
+| Tool                    | Description                                                        |
+| ----------------------- | ------------------------------------------------------------------ |
+| `create_ticket`         | Create a ticket (requires contact email, ticket type, and comment) |
+| `create_ticket_comment` | Add a comment to an existing ticket                                |
 
 ### Form Tools (2)
 
-| Tool                     | Description                     |
-| ------------------------ | ------------------------------- |
-| `list_form_names`        | List all available forms        |
-| `create_form_submission` | Submit a form with field values |
+| Tool                     | Description                                                          |
+| ------------------------ | -------------------------------------------------------------------- |
+| `list_form_names`        | List all available forms                                             |
+| `create_form_submission` | Submit a lead capture form with optional pipeline opportunity creation |
 
 ### File Tools (1)
 
@@ -395,9 +407,12 @@ The server provides actionable error messages for common issues:
 
 ### Important Notes
 
-- **Exact Name Matching**: Many Moxie API endpoints require exact name matches for clients, projects, and templates. Make sure to use the exact names as they appear in Moxie.
+- **Exact Name Matching**: Many Moxie API endpoints require exact name matches for clients, projects, templates, ticket types, and pipeline stages. Make sure to use the exact names as they appear in Moxie.
 - **Draft Invoices**: When creating an invoice without the `sendTo` parameter, the invoice is created in DRAFT status.
 - **Auto-Creation**: Time entries support auto-creation of clients, projects, and deliverables via boolean flags.
+- **Tickets Require Contact Email**: The `create_ticket` tool requires `userEmail` to be an existing contact in your workspace. The ticket will be rejected if the email is not found.
+- **Form Submissions Create Opportunities**: Use `create_form_submission` with `pipelineStageName` to automatically create pipeline opportunities from lead data.
+- **Speculative Endpoints**: The `search_tasks`, `delete_task`, and `create_opportunity` tools use endpoints that follow the Moxie API convention but may not be officially documented. Test them against your workspace.
 
 ## License
 
