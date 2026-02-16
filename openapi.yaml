@@ -634,16 +634,33 @@ components:
         clientName:
           type: string
         assignedTo:
-          type: string
-          description: Email of assigned user
+          type: array
+          items:
+            type: string
+            format: email
+          description: Email addresses of assigned users
         dueDate:
           type: string
           format: date
+        startDate:
+          type: string
+          format: date
+          description: Task start date
         status:
           type: string
         priority:
-          type: string
-          enum: [low, medium, high]
+          type: integer
+          description: Numeric priority for sorting in kanban
+        tasks:
+          type: array
+          items:
+            type: string
+          description: Array of subtask names
+        customValues:
+          type: object
+          additionalProperties:
+            type: string
+          description: Map of custom field names to values
 
     CreateTaskInput:
       type: object
@@ -658,20 +675,48 @@ components:
           type: string
         projectName:
           type: string
-          description: Project name (must exist)
+          description: Project name (must exist, exact match)
         clientName:
           type: string
+          description: Client name (must exist, exact match)
         assignedTo:
-          type: string
-          description: Email of user to assign
+          type: array
+          items:
+            type: string
+            format: email
+          description: Email addresses of users in the workspace
         dueDate:
+          type: string
+          format: date
+        startDate:
           type: string
           format: date
         status:
           type: string
+          description: Must match exactly a status in your kanban
         priority:
+          type: integer
+          description: Numeric priority for sorting in kanban
+        tasks:
+          type: array
+          items:
+            type: string
+          description: Array of subtask names to create
+        customValues:
+          type: object
+          additionalProperties:
+            type: string
+          description: Map of custom field names to values (keys must match project settings)
+
+    DeleteTaskInput:
+      type: object
+      required:
+        - taskId
+      properties:
+        taskId:
           type: string
-          enum: [low, medium, high]
+          format: uuid
+          description: ID of the task to delete
 
     # ==========================================
     # Time Entry Schemas
@@ -887,52 +932,91 @@ components:
     # Ticket Schemas
     # ==========================================
 
+    TicketFormAnswer:
+      type: object
+      required:
+        - fieldKey
+        - question
+        - answer
+      properties:
+        fieldKey:
+          type: string
+          description: Property key for reporting and token mapping
+        question:
+          type: string
+          description: The question text associated with this answer
+        answer:
+          type: string
+          description: The answer provided
+
     Ticket:
       type: object
       required:
-        - subject
+        - userEmail
+        - ticketType
+        - comment
       properties:
         id:
           type: string
           format: uuid
-        subject:
-          type: string
-        description:
-          type: string
-        clientName:
-          type: string
-        projectName:
-          type: string
-        status:
-          type: string
-        priority:
-          type: string
-          enum: [low, medium, high]
-        assignedTo:
+        userEmail:
           type: string
           format: email
+          description: Email of a known contact in the workspace
+        ticketType:
+          type: string
+          description: Ticket type (must match a type in Tickets >> Settings)
+        subject:
+          type: string
+          description: Ticket subject/title
+        comment:
+          type: string
+          description: Initial details/comment of the ticket
+        dueDate:
+          type: string
+          format: date
+          description: Due date in ISO format
+        formData:
+          type: object
+          properties:
+            answers:
+              type: array
+              items:
+                $ref: '#/components/schemas/TicketFormAnswer'
+          description: Structured questions/answers mapped to ticket data
 
     CreateTicketInput:
       type: object
       required:
-        - subject
+        - userEmail
+        - ticketType
+        - comment
       properties:
-        subject:
-          type: string
-        description:
-          type: string
-        clientName:
-          type: string
-        projectName:
-          type: string
-        status:
-          type: string
-        priority:
-          type: string
-          enum: [low, medium, high]
-        assignedTo:
+        userEmail:
           type: string
           format: email
+          description: Email of a known contact (ticket rejected if not found)
+        ticketType:
+          type: string
+          description: Ticket type (found in Tickets >> Settings)
+        comment:
+          type: string
+          description: Initial details/comment of the ticket
+        subject:
+          type: string
+          description: Ticket subject/title
+        dueDate:
+          type: string
+          format: date
+          description: Due date in ISO format
+        formData:
+          type: object
+          properties:
+            answers:
+              type: array
+              items:
+                $ref: '#/components/schemas/TicketFormAnswer'
+          description: Additional structured questions/answers
 
     TicketComment:
       type: object
@@ -980,19 +1064,73 @@ components:
         name:
           type: string
 
-    CreateFormSubmissionInput:
+    FormAnswer:
       type: object
       required:
-        - formName
-        - fields
+        - fieldKey
+        - question
+        - answer
+      properties:
+        fieldKey:
+          type: string
+          description: Property key for reporting and token mapping
+        question:
+          type: string
+          description: The question text associated with this answer
+        answer:
+          type: string
+          description: The answer provided
+
+    CreateFormSubmissionInput:
+      type: object
       properties:
         formName:
           type: string
-          description: Name of the form to submit to
-        fields:
-          type: object
-          additionalProperties: true
-          description: Form field values as key-value pairs
+          description: Associate with an existing form template for reporting
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        role:
+          type: string
+        businessName:
+          type: string
+        website:
+          type: string
+          format: uri
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        locality:
+          type: string
+        postal:
+          type: string
+        country:
+          type: string
+        sourceUrl:
+          type: string
+          format: uri
+          description: URL where the form was submitted
+        leadSource:
+          type: string
+        notes:
+          type: string
+        pipelineStageName:
+          type: string
+          description: Creates an Opportunity in pipeline (must match stage name exactly)
+        answers:
+          type: array
+          items:
+            $ref: '#/components/schemas/FormAnswer'
+          description: Structured question/answer objects
 
     # ==========================================
     # File Schemas
@@ -1553,6 +1691,48 @@ paths:
   # Task Endpoints
   # ==========================================
 
+  /action/tasks/search:
+    get:
+      tags:
+        - Tasks
+      summary: Search tasks
+      description: |
+        Search for tasks in the workspace. Note: This endpoint follows the Moxie API
+        convention but may not be officially documented.
+      operationId: searchTasks
+      parameters:
+        - name: query
+          in: query
+          required: false
+          description: Search query string
+          schema:
+            type: string
+        - name: projectName
+          in: query
+          required: false
+          description: Filter by exact project name
+          schema:
+            type: string
+        - name: clientName
+          in: query
+          required: false
+          description: Filter by exact client name
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
   /action/tasks/create:
     post:
       tags:
@@ -1573,6 +1753,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Task'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /action/tasks/delete:
+    delete:
+      tags:
+        - Tasks
+      summary: Delete a task
+      description: |
+        Deletes a task from a project. Note: This endpoint follows the Moxie API
+        convention but may not be officially documented.
+      operationId: deleteTask
+      parameters:
+        - name: taskId
+          in: query
+          required: true
+          description: ID of the task to delete
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Task deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '404':
@@ -1699,7 +1913,9 @@ paths:
       tags:
         - Tickets
       summary: Create a ticket
-      description: Creates a new support ticket
+      description: |
+        Creates a new support ticket. Requires a known contact email (userEmail),
+        ticket type, and initial comment.
       operationId: createTicket
       requestBody:
         required: true
@@ -1771,12 +1987,14 @@ paths:
         '429':
           $ref: '#/components/responses/RateLimitError'
 
-  /action/forms/submit:
+  /action/formSubmissions/create:
     post:
       tags:
         - Forms
-      summary: Submit form data
-      description: Creates a form submission
+      summary: Create form submission
+      description: |
+        Creates a new form submission with lead information and custom answers.
+        Can optionally create a pipeline opportunity by providing pipelineStageName.
       operationId: createFormSubmission
       requestBody:
         required: true

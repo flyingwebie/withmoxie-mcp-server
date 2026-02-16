@@ -210,10 +210,13 @@ export interface Task {
   description?: string;
   projectName?: string;
   clientName?: string;
-  assignedTo?: string;
+  assignedTo?: string[];
   dueDate?: string;
+  startDate?: string;
   status?: string;
-  priority?: string;
+  priority?: number;
+  tasks?: string[];
+  customValues?: Record<string, string>;
 }
 
 export interface CreateTaskInput {
@@ -221,10 +224,17 @@ export interface CreateTaskInput {
   description?: string;
   projectName: string;
   clientName?: string;
-  assignedTo?: string;
+  assignedTo?: string[];
   dueDate?: string;
+  startDate?: string;
   status?: string;
-  priority?: string;
+  priority?: number;
+  tasks?: string[];
+  customValues?: Record<string, string>;
+}
+
+export interface DeleteTaskInput {
+  taskId: string;
 }
 
 // ============================================
@@ -322,25 +332,33 @@ export interface PipelineStage {
 // Ticket Types
 // ============================================
 
+export interface TicketFormAnswer {
+  fieldKey: string;
+  question: string;
+  answer: string;
+}
+
+export interface TicketFormData {
+  answers: TicketFormAnswer[];
+}
+
 export interface Ticket {
   id?: string;
-  subject: string;
-  description?: string;
-  clientName?: string;
-  projectName?: string;
-  status?: string;
-  priority?: string;
-  assignedTo?: string;
+  userEmail: string;
+  ticketType: string;
+  subject?: string;
+  comment: string;
+  dueDate?: string;
+  formData?: TicketFormData;
 }
 
 export interface CreateTicketInput {
-  subject: string;
-  description?: string;
-  clientName?: string;
-  projectName?: string;
-  status?: string;
-  priority?: string;
-  assignedTo?: string;
+  userEmail: string;
+  ticketType: string;
+  comment: string;
+  subject?: string;
+  dueDate?: string;
+  formData?: TicketFormData;
 }
 
 export interface TicketComment {
@@ -365,14 +383,54 @@ export interface FormName {
   name: string;
 }
 
+export interface FormAnswer {
+  fieldKey: string;
+  question: string;
+  answer: string;
+}
+
 export interface FormSubmission {
-  formName: string;
-  fields: Record<string, unknown>;
+  formName?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+  businessName?: string;
+  website?: string;
+  address1?: string;
+  address2?: string;
+  city?: string;
+  locality?: string;
+  postal?: string;
+  country?: string;
+  sourceUrl?: string;
+  leadSource?: string;
+  notes?: string;
+  pipelineStageName?: string;
+  answers?: FormAnswer[];
 }
 
 export interface CreateFormSubmissionInput {
-  formName: string;
-  fields: Record<string, unknown>;
+  formName?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  role?: string;
+  businessName?: string;
+  website?: string;
+  address1?: string;
+  address2?: string;
+  city?: string;
+  locality?: string;
+  postal?: string;
+  country?: string;
+  sourceUrl?: string;
+  leadSource?: string;
+  notes?: string;
+  pipelineStageName?: string;
+  answers?: FormAnswer[];
 }
 
 // ============================================

@@ -32,7 +32,7 @@ export function registerOpportunityTools(server: McpServer) {
 
   server.tool(
     "create_opportunity",
-    "Create a new sales opportunity in the pipeline",
+    "Create a new sales opportunity in the pipeline. Note: This endpoint (/action/opportunities/create) may not be officially documented. The official way to create opportunities is via form submissions with a pipelineStageName using create_form_submission.",
     {
       name: z.string().describe("Name/title of the opportunity"),
       clientName: z.string().optional().describe("Client associated with this opportunity"),
