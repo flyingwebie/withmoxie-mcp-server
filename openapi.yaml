@@ -1,327 +1,1578 @@
 openapi: 3.1.0
 info:
-  title: Moxie CRM Public API
-  description: |
-    The Moxie CRM Public API allows you to programmatically interact with your Moxie workspace.
-    This API enables management of clients, contacts, projects, invoices, time entries, expenses,
-    opportunities, tickets, and more.
-
-    ## Authentication
-    All API requests require authentication using an API key passed in the `X-API-KEY` header.
-
-    ## Rate Limiting
-    The API is rate limited to 100 requests per 5 minutes per workspace.
-
-    ## Base URL
-    The base URL is workspace-specific and follows the pattern:
-    `https://{pod}.withmoxie.com/api/public`
-
-    Where `{pod}` is your workspace's pod identifier (e.g., pod01, pod02).
-  version: 1.0.0
-  contact:
-    name: Moxie Support
-    url: https://help.withmoxie.com
-  license:
-    name: MIT
-    url: https://opensource.org/licenses/MIT
-
+  title: Moxie Public API
+  description: "Public API for reading and writing Moxie workspace data - clients,\
+    \ contacts, projects, invoices, payments, agreements, tickets, time tracking and\
+    \ more. All requests authenticate with the X-API-KEY header."
+  version: v1
 servers:
-  - url: https://{pod}.withmoxie.com/api/public
-    description: Moxie CRM Production API
-    variables:
-      pod:
-        default: pod01
-        description: Your workspace's pod identifier
-
+- url: https://api.withmoxie.com
+  description: Generated server url
 security:
-  - ApiKeyAuth: []
-
+- apiKey: []
+paths:
+  /public/action/projects/update:
+    put:
+      tags:
+      - Projects & Tasks
+      summary: Update project (full replace)
+      description: Replaces the project identified by id with the request body. Omitted
+        fields are overwritten.
+      operationId: updateProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Project"
+        required: true
+      responses:
+        "412":
+          description: The id field is missing from the request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+        "404":
+          description: No project with that id exists in the workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+    patch:
+      tags:
+      - Projects & Tasks
+      summary: Update project (partial)
+      description: Merges the given fields into the project identified by id.
+      operationId: patchProject
+      requestBody:
+        description: "Any subset of the entity fields to change, plus the required\
+          \ id"
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "412":
+          description: The id field is missing from the request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+        "404":
+          description: No project with that id exists in the workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+  /public/action/opportunities/update:
+    put:
+      tags:
+      - Pipeline & Forms
+      summary: Update opportunity (full replace)
+      description: Replaces the opportunity identified by id with the request body.
+        Omitted fields are overwritten.
+      operationId: updateOpportunity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Opportunity"
+        required: true
+      responses:
+        "412":
+          description: The id field is missing from the request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+        "404":
+          description: No opportunity with that id exists in the workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+    patch:
+      tags:
+      - Pipeline & Forms
+      summary: Update opportunity (partial)
+      description: Merges the given fields into the opportunity identified by id.
+        Moving pipeline stage is a patch of statusId.
+      operationId: patchOpportunity
+      requestBody:
+        description: "Any subset of the entity fields to change, plus the required\
+          \ id"
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "412":
+          description: The id field is missing from the request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+        "404":
+          description: No opportunity with that id exists in the workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+  /public/action/expenses/update:
+    put:
+      tags:
+      - Expenses
+      summary: Update expense (full replace)
+      description: Replaces the expense identified by id with the request body. Omitted
+        fields are overwritten.
+      operationId: updateExpense
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Expense"
+        required: true
+      responses:
+        "412":
+          description: The id field is missing from the request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+        "404":
+          description: No expense with that id exists in the workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+    patch:
+      tags:
+      - Expenses
+      summary: Update expense (partial)
+      description: Merges the given fields into the expense identified by id.
+      operationId: patchExpense
+      requestBody:
+        description: "Any subset of the entity fields to change, plus the required\
+          \ id"
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "412":
+          description: The id field is missing from the request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+        "404":
+          description: No expense with that id exists in the workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+  /public/action/contacts/update:
+    put:
+      tags:
+      - Contacts
+      summary: Update contact (full replace)
+      description: Replaces the contact identified by id with the request body. Omitted
+        fields are overwritten.
+      operationId: updateContact
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Contact"
+        required: true
+      responses:
+        "412":
+          description: The id field is missing from the request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+        "404":
+          description: No contact with that id exists in the workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+    patch:
+      tags:
+      - Contacts
+      summary: Update contact (partial)
+      description: Merges the given fields into the contact identified by id.
+      operationId: patchContact
+      requestBody:
+        description: "Any subset of the entity fields to change, plus the required\
+          \ id"
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "412":
+          description: The id field is missing from the request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+        "404":
+          description: No contact with that id exists in the workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+  /public/action/clients/update:
+    put:
+      tags:
+      - Clients
+      summary: Update client (full replace)
+      description: Replaces the client identified by id with the request body. Omitted
+        fields are overwritten. accountId is always forced to the caller's workspace.
+      operationId: updateClient
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Client"
+        required: true
+      responses:
+        "412":
+          description: The id field is missing from the request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+        "404":
+          description: No client with that id exists in the workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+    patch:
+      tags:
+      - Clients
+      summary: Update client (partial)
+      description: Merges the given fields into the client identified by id. Omitted
+        fields keep their current values.
+      operationId: patchClient
+      requestBody:
+        description: "Any subset of the entity fields to change, plus the required\
+          \ id"
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "412":
+          description: The id field is missing from the request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+        "404":
+          description: No client with that id exists in the workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+  /public/unsubscribe:
+    get:
+      tags:
+      - public-unsubscribe-controller
+      operationId: confirm
+      parameters:
+      - name: token
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: string
+    post:
+      tags:
+      - public-unsubscribe-controller
+      operationId: unsubscribe
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: string
+  /public/api/unsubscribe:
+    post:
+      tags:
+      - api-hook-controller
+      operationId: unsubscribeHook
+      parameters:
+      - name: X-API-KEY
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RestHook"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /public/api/subscribe:
+    post:
+      tags:
+      - api-hook-controller
+      operationId: subscribeHook
+      parameters:
+      - name: X-API-KEY
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RestHook"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /public/api/sample:
+    post:
+      tags:
+      - api-hook-controller
+      operationId: getSampleData
+      parameters:
+      - name: X-API-KEY
+        in: header
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RestHook"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {}
+  /public/action/timeWorked/create:
+    post:
+      tags:
+      - Time Tracking
+      summary: Create time entry
+      description: "Logs a time-worked entry; can create the client, project or deliverable\
+        \ on the fly via the create* flags."
+      operationId: createTimerEvent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TimerCreate"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TimerEvent"
+  /public/action/tickets/create:
+    post:
+      tags:
+      - Tickets
+      summary: Create ticket
+      operationId: createTicket
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketCreate"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketWrapper"
+  /public/action/tickets/comments/create:
+    post:
+      tags:
+      - Tickets
+      summary: Add comment to ticket
+      operationId: createTicketComment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketCommentCreate"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TicketWrapper"
+  /public/action/tasks/create:
+    post:
+      tags:
+      - Projects & Tasks
+      summary: Create task
+      description: "Creates a task (deliverable) inside a project, resolved by client\
+        \ and project name."
+      operationId: creteTask
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TaskCreate"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDeliverable"
+  /public/action/projects/create:
+    post:
+      tags:
+      - Projects & Tasks
+      summary: Create project
+      operationId: crateProject
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProjectCreate"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+  /public/action/payment/create:
+    post:
+      tags:
+      - Invoices & Payments
+      summary: Apply payment to invoice
+      description: Applies a payment to an open invoice matched by invoiceNumber and
+        clientName.
+      operationId: createInvoice
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentCreate"
+        required: true
+      responses:
+        "404":
+          description: "Invoice, client or contact could not be located"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+  /public/action/opportunities/create:
+    post:
+      tags:
+      - Pipeline & Forms
+      summary: Create opportunity
+      operationId: createOpportunity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OpportunityCreate"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Opportunity"
+  /public/action/invoices/create:
+    post:
+      tags:
+      - Invoices & Payments
+      summary: Create invoice
+      description: Creates and optionally sends an invoice with line items. When sendTo.send
+        is false or omitted the invoice stays in DRAFT.
+      operationId: createInvoice_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvoiceCreate"
+        required: true
+      responses:
+        "404":
+          description: "Client, email template or send contacts could not be located"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+  /public/action/formSubmissions/create:
+    post:
+      tags:
+      - Pipeline & Forms
+      summary: Create form submission
+      description: "Submits a lead or discovery form by name, creating a pipeline\
+        \ entry."
+      operationId: crateFormSubmission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FormSubmissionCreate"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FormSubmission"
+  /public/action/expenses/create:
+    post:
+      tags:
+      - Expenses
+      summary: Create expense
+      operationId: createExpense
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExpenseCreate"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Expense"
+  /public/action/deliverable/approve:
+    post:
+      tags:
+      - Projects & Tasks
+      summary: Approve deliverable
+      description: "Approves a project deliverable identified by client, project and\
+        \ deliverable name."
+      operationId: createTimerEvent_1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApproveDeliverable"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDeliverableMini"
+  /public/action/contacts/create:
+    post:
+      tags:
+      - Contacts
+      summary: Create contact
+      operationId: createContact
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactCreate"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contact"
+  /public/action/clients/create:
+    post:
+      tags:
+      - Clients
+      summary: Create client
+      operationId: searchClients
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Client"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+  /public/action/calendar/createOrUpdate:
+    post:
+      tags:
+      - Calendar
+      summary: Create or update calendar event
+      description: "Creates a calendar event, or updates it when eventId is supplied."
+      operationId: createOrUpdateCalendarEvent
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CalendarEvent"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NativeCalendarEvent"
+  /public/action/attachments/create:
+    post:
+      tags:
+      - Attachments
+      summary: Attach file (multipart upload)
+      description: Uploads a file (multipart/form-data) and attaches it to a record.
+      operationId: uploadAttachment
+      parameters:
+      - name: id
+        in: query
+        description: Id of the object to attach the file to
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: query
+        description: "CLIENT, PROJECT, DELIVERABLE, OPPORTUNITY, EXPENSE or TICKET"
+        required: true
+        schema:
+          type: string
+          enum:
+          - CLIENT
+          - PROJECT
+          - DELIVERABLE
+          - OPPORTUNITY
+          - EXPENSE
+          - TICKET
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required:
+              - file
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /public/action/attachments/createFromUrl:
+    post:
+      tags:
+      - Attachments
+      summary: Attach file from URL
+      description: Fetches a file from a public URL and attaches it to a record.
+      operationId: uploadAttachment_1
+      parameters:
+      - name: id
+        in: query
+        description: Id of the object to attach the file to
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: query
+        description: "CLIENT, PROJECT, DELIVERABLE, OPPORTUNITY, EXPENSE or TICKET"
+        required: true
+        schema:
+          type: string
+          enum:
+          - CLIENT
+          - PROJECT
+          - DELIVERABLE
+          - OPPORTUNITY
+          - EXPENSE
+          - TICKET
+      - name: fileUrl
+        in: query
+        description: Publicly reachable URL of the file to fetch
+        required: true
+        schema:
+          type: string
+      - name: fileName
+        in: query
+        description: Name to store the file under
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  /public/action/tickets/status:
+    patch:
+      tags:
+      - Tickets
+      summary: Update ticket status
+      description: Changes only the workflow status of the ticket identified by id
+        or number.
+      operationId: updateTicketStatus
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketStatusUpdate"
+        required: true
+      responses:
+        "200":
+          description: Ticket status updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ticket"
+        "412":
+          description: "The identifier or status is missing, or the status is invalid"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+        "404":
+          description: No ticket with that id or number exists in the workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+  /public/action/tasks/update:
+    patch:
+      tags:
+      - Projects & Tasks
+      summary: Update task (partial)
+      description: Merges the given fields into the task identified by id.
+      operationId: patchTask
+      requestBody:
+        description: "Any subset of task fields to change, plus the required id"
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Task updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDeliverable"
+        "412":
+          description: The id field is missing from the request body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+        "404":
+          description: No task with that id exists in the workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+  /public/api/customFields:
+    get:
+      tags:
+      - api-hook-controller
+      operationId: getCustomFields
+      parameters:
+      - name: X-API-KEY
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: type
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DynamicField"
+  /public/api/auth:
+    get:
+      tags:
+      - api-hook-controller
+      operationId: validateZapierAuth
+      parameters:
+      - name: X-API-KEY
+        in: header
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SimpleAccount"
+  /public/action/vendors/list:
+    get:
+      tags:
+      - Workspace & Reference Data
+      summary: List vendor names
+      operationId: getVendorNames
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /public/action/users/list:
+    get:
+      tags:
+      - Workspace & Reference Data
+      summary: List workspace users
+      operationId: getPayableInvoices
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserAccountMini"
+                uniqueItems: true
+  /public/action/tickets/search:
+    get:
+      tags:
+      - Tickets
+      summary: Search tickets
+      description: "Case-insensitive matching on ticket subject, status, summary,\
+        \ and number. Pass id or ticketNumber for an exact lookup."
+      operationId: searchTickets
+      parameters:
+      - name: query
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: query
+        description: Exact ticket id; overrides ticketNumber and query
+        required: false
+        schema:
+          type: string
+      - name: ticketNumber
+        in: query
+        description: Exact ticket number; overrides query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ticket"
+  /public/action/tickets/list:
+    get:
+      tags:
+      - Tickets
+      summary: List tickets
+      description: "Lists tickets, optionally filtered by client, open state, or archive\
+        \ state."
+      operationId: listTickets
+      parameters:
+      - name: open
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: archived
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: clientId
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ticket"
+  /public/action/tasks/search:
+    get:
+      tags:
+      - Projects & Tasks
+      summary: Search tasks
+      description: Case-insensitive matching on task name and description. Pass id
+        for an exact lookup.
+      operationId: searchTasks
+      parameters:
+      - name: query
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: query
+        description: Exact task id; overrides query
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectDeliverableMini"
+  /public/action/tasks/list:
+    get:
+      tags:
+      - Projects & Tasks
+      summary: List tasks
+      description: "Lists tasks, optionally filtered by project, client, status, or\
+        \ archive state."
+      operationId: listTasks
+      parameters:
+      - name: projectId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: clientId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: statusId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: archived
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectDeliverableMini"
+  /public/action/taskStages/list:
+    get:
+      tags:
+      - Workspace & Reference Data
+      summary: List project task stages
+      description: "Lists task stages for the requested project type, or for the default\
+        \ project type when projectTypeId is omitted."
+      operationId: getTaskStages
+      parameters:
+      - name: projectTypeId
+        in: query
+        description: Project type id returned by List project types
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DeliverableStatus"
+  /public/action/projects/search:
+    get:
+      tags:
+      - Projects & Tasks
+      summary: Search projects
+      description: query is an exact client name and returns that client's projects
+        (404 if no such client). Pass id for an exact single-record lookup. Omit both
+        to list all projects.
+      operationId: searchProjects
+      parameters:
+      - name: query
+        in: query
+        description: Exact client name; returns that client's projects
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: query
+        description: Exact project id; overrides query
+        required: false
+        schema:
+          type: string
+      responses:
+        "404":
+          description: query was given but no client with that exact name exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+  /public/action/projectTypes/list:
+    get:
+      tags:
+      - Workspace & Reference Data
+      summary: List project types
+      description: "Lists the workspace's project types, including their project fields,\
+        \ task fields, and task stages."
+      operationId: getProjectTypes
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectType"
+  /public/action/pipelineStages/list:
+    get:
+      tags:
+      - Workspace & Reference Data
+      summary: List pipeline stages
+      operationId: getPipelineStages
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Stage"
+  /public/action/payableInvoices/search:
+    get:
+      tags:
+      - Invoices & Payments
+      summary: Search payable invoices
+      description: Lists outstanding invoices including line items. query is an exact
+        client name (empty array if no such client). Pass id for an exact single-record
+        lookup.
+      operationId: getPayableInvoices_1
+      parameters:
+      - name: query
+        in: query
+        description: Exact client name; returns that client's outstanding invoices
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: query
+        description: Exact invoice id; overrides query
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InvoiceMini"
+  /public/action/invoiceTemplates/list:
+    get:
+      tags:
+      - Workspace & Reference Data
+      summary: List invoice templates
+      operationId: getInvoiceTemplates
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /public/action/formNames/list:
+    get:
+      tags:
+      - Workspace & Reference Data
+      summary: List form names
+      operationId: getFormNames
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /public/action/emailTemplates:
+    get:
+      tags:
+      - Workspace & Reference Data
+      summary: List email template IDs and names
+      description: "Returns workspace email template IDs and names. Use an id with\
+        \ GET /public/action/emailTemplates/{templateId} to retrieve raw content.\
+        \ The legacy /emailTemplates/list endpoint continues to return names only."
+      operationId: listEmailTemplateDetails
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ApiEmailTemplateSummary"
+  /public/action/emailTemplates/{templateId}:
+    get:
+      tags:
+      - Workspace & Reference Data
+      summary: Get raw email template content
+      description: "Returns the template id, name, subject, and htmlContent from the\
+        \ API key's workspace. Tokens are returned unchanged; this endpoint does not\
+        \ render tokens or send email."
+      operationId: getEmailTemplate
+      parameters:
+      - name: templateId
+        in: path
+        description: Template id returned by GET /public/action/emailTemplates
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiEmailTemplate"
+        "404":
+          description: Template not found in the API key's workspace
+  /public/action/emailTemplates/list:
+    get:
+      tags:
+      - Workspace & Reference Data
+      summary: List email templates
+      operationId: getEmailTemplates
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+  /public/action/contacts/search:
+    get:
+      tags:
+      - Contacts
+      summary: Search contacts
+      description: "Term is matched (contains, case-insensitive) against email, first\
+        \ name and last name. Pass id for an exact single-record lookup. Omit both\
+        \ to list all active contacts."
+      operationId: searchContacts
+      parameters:
+      - name: query
+        in: query
+        description: "Term matched against email, first and last name (contains)"
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: query
+        description: Exact contact id; overrides query
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Contact"
+  /public/action/clients/search:
+    get:
+      tags:
+      - Clients
+      summary: Search clients
+      description: "Case-insensitive matching: client name and phone (starts-with),\
+        \ contact email and phone (starts-with), contact full name (contains). Pass\
+        \ id for an exact single-record lookup."
+      operationId: searchClients_1
+      parameters:
+      - name: query
+        in: query
+        description: Free-text term; see operation description for matched fields
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: query
+        description: Exact client id; overrides query
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Client"
+  /public/action/clients/list:
+    get:
+      tags:
+      - Clients
+      summary: List clients
+      description: Lists all active clients in the workspace.
+      operationId: getClientList
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Client"
+  /public/action/agreements/search:
+    get:
+      tags:
+      - Agreements
+      summary: Search agreements
+      description: "Read-only. Lists agreements, optionally filtered by clientId.\
+        \ Pass id for an exact single-record lookup."
+      operationId: searchAgreements
+      parameters:
+      - name: clientId
+        in: query
+        description: Only agreements belonging to this client id
+        required: false
+        schema:
+          type: string
+      - name: id
+        in: query
+        description: Exact agreement id; overrides clientId
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AgreementMini"
+  /public/action/account/{accountId}:
+    get:
+      tags:
+      - Workspace & Reference Data
+      summary: Get account (supplier) info
+      description: "Returns the workspace identity (name, address, taxId, tax label,\
+        \ currency) for the given accountId. The accountId must match the API key's\
+        \ workspace. No bank details or payment-processor ids are returned."
+      operationId: getAccountInfo
+      parameters:
+      - name: accountId
+        in: path
+        description: Workspace account id; must match the API key's workspace
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "403":
+          description: The accountId does not match the API key's workspace
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorDetails"
+  /public/action/calendar/{id}:
+    delete:
+      tags:
+      - Calendar
+      summary: Delete calendar event
+      operationId: deleteCalendarEvent
+      parameters:
+      - name: id
+        in: path
+        description: The eventId of the calendar event to delete
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
 components:
-  securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: X-API-KEY
-      description: Your Moxie API key
-
   schemas:
-    # ==========================================
-    # Common Types
-    # ==========================================
-
-    PaymentTerms:
+    AccountingIntegrationKeys:
       type: object
       properties:
-        paymentDays:
+        quickbooksId:
+          type: string
+        xeroId:
+          type: string
+    ClientInfo:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        initials:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        locality:
+          type: string
+        postal:
+          type: string
+        country:
+          type: string
+        phone:
+          type: string
+        color:
+          type: string
+        taxId:
+          type: string
+        website:
+          type: string
+        contact:
+          $ref: "#/components/schemas/Contact"
+        roundingIncrement:
           type: integer
-          description: Number of days for payment terms
-          example: 30
-        latePaymentFee:
+          format: int64
+        depositBalance:
           type: number
-          description: Late payment fee percentage
-          example: 1.5
+          format: double
+        customInfo:
+          type: boolean
+        customValues:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomValue"
+    ClientMicro:
+      type: object
+      properties:
+        accountId:
+          type: integer
+          format: int64
+        id:
+          type: string
+        name:
+          type: string
+        initials:
+          type: string
+        s3LogoFile:
+          type: string
+        logo:
+          type: string
+        color:
+          type: string
+    ClientMini:
+      type: object
+      properties:
+        accountId:
+          type: integer
+          format: int64
+        sampleData:
+          type: boolean
+        id:
+          type: string
+        clientType:
+          type: string
+          enum:
+          - Client
+          - Prospect
+        name:
+          type: string
+        initials:
+          type: string
+        locality:
+          type: string
+        country:
+          type: string
+        color:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        postal:
+          type: string
+        website:
+          type: string
+        phone:
+          type: string
+        s3LogoFile:
+          type: string
+        taxId:
+          type: string
+        projects:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProjectMini"
         hourlyAmount:
           type: number
-          description: Default hourly rate
-          example: 150.00
+          format: double
+        archive:
+          type: boolean
+        currency:
+          type: string
+        logo:
+          type: string
+        leadSource:
+          type: string
+        defaultTaxRate:
+          type: number
+          format: double
+        defaultTaxRuleId:
+          type: string
         whoPaysCardFees:
           type: string
-          enum: [Client, Freelancer, Split]
-          description: Who pays credit card processing fees
-          example: Client
-
-    # ==========================================
-    # Client Schemas
-    # ==========================================
-
+          enum:
+          - Client
+          - Freelancer
+          - Split
+        customValues:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomValue"
+        contact:
+          $ref: "#/components/schemas/Contact"
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+        author:
+          type: string
+        authorId:
+          type: string
+        comment:
+          type: string
+        format:
+          type: string
+          enum:
+          - Markdown
+          - HTML
+        clientComment:
+          type: boolean
+        edited:
+          type: boolean
+        privateComment:
+          type: boolean
+        sendEmail:
+          type: boolean
+        timestamp:
+          type: string
+          format: date-time
     Contact:
       type: object
       properties:
         id:
           type: string
-          format: uuid
-          description: Unique contact identifier
         accountId:
-          type: string
-          format: uuid
-          description: Account identifier
+          type: integer
+          format: int64
         clientId:
           type: string
-          format: uuid
-          description: Associated client identifier
-        firstName:
-          type: string
-          description: Contact's first name
-          example: John
-        lastName:
-          type: string
-          description: Contact's last name
-          example: Doe
-        role:
-          type: string
-          description: Contact's role/title
-          example: Marketing Director
-        phone:
-          type: string
-          description: Phone number
-          example: "+1-555-123-4567"
-        email:
-          type: string
-          format: email
-          description: Email address
-          example: john.doe@example.com
-        mobile:
-          type: string
-          description: Mobile phone number
-        notes:
-          type: string
-          description: Additional notes
-        defaultContact:
-          type: boolean
-          description: Whether this is the default contact
-          default: false
-        invoiceContact:
-          type: boolean
-          description: Whether this contact receives invoices
-          default: false
-        portalAccess:
-          type: boolean
-          description: Whether this contact has portal access
-          default: false
-
-    Client:
-      type: object
-      required:
-        - name
-        - clientType
-        - currency
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: Unique client identifier
-        accountId:
-          type: string
-          format: uuid
-          description: Account identifier
-        name:
-          type: string
-          description: Client name
-          example: Acme Corporation
-        clientType:
-          type: string
-          enum: [Client, Prospect]
-          description: Type of client
-          example: Client
-        initials:
-          type: string
-          description: Client initials for display
-          maxLength: 3
-          example: ACM
-        address1:
-          type: string
-          description: Primary address line
-        address2:
-          type: string
-          description: Secondary address line
-        city:
-          type: string
-          description: City
-        locality:
-          type: string
-          description: State/Province
-        postal:
-          type: string
-          description: Postal/ZIP code
-        country:
-          type: string
-          description: Country
-        website:
-          type: string
-          format: uri
-          description: Client website
-        phone:
-          type: string
-          description: Phone number
-        color:
-          type: string
-          description: Display color (hex)
-          example: "#FF5733"
-        taxId:
-          type: string
-          description: Tax identification number
-        leadSource:
-          type: string
-          description: How the client was acquired
-        archive:
-          type: boolean
-          description: Whether the client is archived
-          default: false
-        paymentTerms:
-          $ref: '#/components/schemas/PaymentTerms'
-        payInstructions:
-          type: string
-          description: Payment instructions for invoices
-        hourlyAmount:
-          type: number
-          description: Default hourly rate
-        roundingIncrement:
-          type: integer
-          description: Time rounding increment in minutes
-        currency:
-          type: string
-          description: Currency code (ISO 4217)
-          example: USD
-        stripeClientId:
-          type: string
-          description: Stripe customer ID
-        notes:
-          type: string
-          description: Internal notes
-        contacts:
-          type: array
-          items:
-            $ref: '#/components/schemas/Contact'
-          description: Associated contacts
-        logo:
-          type: string
-          format: uri
-          description: Client logo URL
-
-    CreateClientInput:
-      type: object
-      required:
-        - name
-        - clientType
-        - currency
-      properties:
-        name:
-          type: string
-          description: Client name
-          example: Acme Corporation
-        clientType:
-          type: string
-          enum: [Client, Prospect]
-          description: Type of client
-        currency:
-          type: string
-          description: Currency code (ISO 4217)
-          example: USD
-        initials:
-          type: string
-          maxLength: 3
-        address1:
-          type: string
-        address2:
-          type: string
-        city:
-          type: string
-        locality:
-          type: string
-        postal:
-          type: string
-        country:
-          type: string
-        website:
-          type: string
-          format: uri
-        phone:
-          type: string
-        color:
-          type: string
-        taxId:
-          type: string
-        leadSource:
-          type: string
-        archive:
-          type: boolean
-        paymentTerms:
-          $ref: '#/components/schemas/PaymentTerms'
-        payInstructions:
-          type: string
-        hourlyAmount:
-          type: number
-        roundingIncrement:
-          type: integer
-        stripeClientId:
-          type: string
-        notes:
-          type: string
-        contacts:
-          type: array
-          items:
-            type: object
-            properties:
-              firstName:
-                type: string
-              lastName:
-                type: string
-              role:
-                type: string
-              phone:
-                type: string
-              email:
-                type: string
-                format: email
-              mobile:
-                type: string
-              notes:
-                type: string
-              defaultContact:
-                type: boolean
-              invoiceContact:
-                type: boolean
-              portalAccess:
-                type: boolean
-
-    CreateContactInput:
-      type: object
-      required:
-        - clientName
-      properties:
-        clientName:
-          type: string
-          description: Name of the client to add contact to
         firstName:
           type: string
         lastName:
@@ -332,7 +1583,6 @@ components:
           type: string
         email:
           type: string
-          format: email
         mobile:
           type: string
         notes:
@@ -343,68 +1593,437 @@ components:
           type: boolean
         portalAccess:
           type: boolean
-
-    # ==========================================
-    # Project Schemas
-    # ==========================================
-
+        customValues:
+          type: array
+          description: Custom-field values
+          items:
+            $ref: "#/components/schemas/CustomValue"
+        searchObject:
+          $ref: "#/components/schemas/SearchObject"
+        emulated:
+          type: boolean
+      required:
+      - accountId
+    CurrencyRate:
+      type: object
+      properties:
+        currency:
+          type: string
+        rate:
+          type: number
+          format: double
+    CustomValue:
+      type: object
+      properties:
+        fieldId:
+          type: string
+          description: Id of the custom field definition
+        mappingKey:
+          type: string
+          description: Stable key used to match the field
+          example: account_manager
+        fieldName:
+          type: string
+          description: Human-readable field name
+          example: Account Manager
+        value:
+          description: "The value (string, number, boolean, ...)"
+        type:
+          type: string
+          description: The custom field data type
+          enum:
+          - Text
+          - Numeric
+          - Currency
+          - Date
+          - Select
+          - Radio
+          - Checkbox
+          - Link
+          - Phone
+          - Email
+        valueAsString:
+          type: string
+    EventLog:
+      type: object
+      properties:
+        user:
+          type: string
+        events:
+          type: array
+          items:
+            type: string
+        clientEvent:
+          type: boolean
+        timestamp:
+          type: string
+          format: date-time
     FeeSchedule:
       type: object
       properties:
         feeType:
           type: string
-          enum: [HOURLY, FIXED, RETAINER]
-          description: Type of fee structure
+          enum:
+          - Hourly
+          - Fixed Price
+          - Retainer
+          - Per Item
         amount:
           type: number
-          description: Fee amount
+          format: double
         retainerSchedule:
           type: string
-          description: Retainer billing schedule
+          enum:
+          - Weekly
+          - Bi-Weekly
+          - Monthly
+          - Quarterly
+          - Bi-Annually
+          - Annually
+          - As Needed
         estimateMax:
           type: number
-          description: Maximum estimate
+          format: double
         estimateMin:
           type: number
-          description: Minimum estimate
+          format: double
         retainerStart:
           type: string
           format: date
-          description: Retainer start date
         retainerTiming:
           type: string
-          description: When retainer is billed
+          enum:
+          - Advanced
+          - Arrears
+        retainerPeriods:
+          type: integer
+          format: int32
         retainerOverageRate:
           type: number
-          description: Rate for hours over retainer
+          format: double
         taxable:
           type: boolean
-          description: Whether the fee is taxable
-
-    Project:
-      type: object
+        fromProposalId:
+          type: string
+        fromProposalSignedDate:
+          type: string
+          format: date-time
+        updatedDate:
+          type: string
+          format: date-time
+        updatedBy:
+          type: string
+        retainerActive:
+          type: boolean
       required:
-        - name
+      - feeType
+    PaymentHistory:
+      type: object
+      properties:
+        invoiceId:
+          type: string
+        clientId:
+          type: string
+        invoiceNumber:
+          type: integer
+          format: int64
+        invoiceNumberFormatted:
+          type: string
+        invoiceStatus:
+          type: string
+          enum:
+          - INIT
+          - DRAFT
+          - SENT
+          - PARTIAL
+          - PAID
+          - PENDING
+          - VOIDED
+          - WRITE-OFF
+        status:
+          type: string
+          enum:
+          - INIT
+          - DRAFT
+          - SENT
+          - PARTIAL
+          - PAID
+          - PENDING
+          - VOIDED
+          - WRITE-OFF
+        clientInfo:
+          $ref: "#/components/schemas/ClientInfo"
+        invoiceDate:
+          type: string
+          format: date
+        dateCreated:
+          type: string
+          format: date
+        dateSent:
+          type: string
+          format: date
+        dateDue:
+          type: string
+          format: date
+        amount:
+          type: number
+          format: double
+        localAmount:
+          type: number
+          format: double
+        description:
+          type: string
+        currency:
+          type: string
+        retainerPeriod:
+          $ref: "#/components/schemas/RetainerPeriod"
+        integrationKeys:
+          $ref: "#/components/schemas/AccountingIntegrationKeys"
+    Product:
+      type: object
       properties:
         id:
           type: string
-          format: uuid
         accountId:
+          type: integer
+          format: int64
+        productName:
           type: string
-          format: uuid
-        clientId:
-          type: string
-          format: uuid
-        name:
-          type: string
-          description: Project name
-          example: Website Redesign
         description:
           type: string
-          description: Project description
+        unit:
+          type: string
+        rate:
+          type: number
+          format: double
+        hourly:
+          type: boolean
+        taxable:
+          type: boolean
+        deposit:
+          type: boolean
+        descriptionFormat:
+          type: string
+          enum:
+          - Markdown
+          - HTML
+        folder:
+          type: string
+        currencyRates:
+          type: array
+          items:
+            $ref: "#/components/schemas/CurrencyRate"
+      required:
+      - accountId
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: integer
+          format: int64
+        clientId:
+          type: string
+        projectTypeId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        portalAccess:
+          type: string
+          enum:
+          - Full access
+          - Read only
+          - Overview
+          - None
+        portalAccessAssignedOnly:
+          type: boolean
+        showTimeWorkedInPortal:
+          type: boolean
+        projectOwners:
+          type: array
+          items:
+            type: integer
+            format: int64
+          uniqueItems: true
+        dateCreated:
+          type: string
+          format: date-time
+        dateCompleted:
+          type: string
+          format: date-time
+        proposalId:
+          type: string
+        proposalName:
+          type: string
+        proposalVersion:
+          type: integer
+          format: int32
         active:
           type: boolean
-          description: Whether the project is active
+        startDate:
+          type: string
+          format: date
+        dueDate:
+          type: string
+          format: date
+        hexColor:
+          type: string
+        feeSchedule:
+          $ref: "#/components/schemas/FeeSchedule"
+        clientMini:
+          $ref: "#/components/schemas/ClientMini"
+        customValues:
+          type: array
+          description: Custom-field values
+          items:
+            $ref: "#/components/schemas/CustomValue"
+      required:
+      - accountId
+      - clientId
+      - dateCreated
+      - name
+    ProjectDeliverableMini:
+      type: object
+      properties:
+        id:
+          type: string
+        clientId:
+          type: string
+        projectId:
+          type: string
+        projectTypeId:
+          type: string
+        parentTaskId:
+          type: string
+        subTaskSort:
+          type: integer
+          format: int32
+        project:
+          $ref: "#/components/schemas/ProjectMicro"
+        client:
+          $ref: "#/components/schemas/ClientMicro"
+        name:
+          type: string
+        statusId:
+          type: string
+        status:
+          type: string
+        descriptionFormat:
+          type: string
+          enum:
+          - Markdown
+          - HTML
+        priority:
+          type: integer
+          format: int32
+        taskPriority:
+          type: string
+          enum:
+          - Low
+          - Normal
+          - Medium
+          - High
+          - Urgent
+        description:
+          type: string
+        assignedTo:
+          type: integer
+          format: int64
+        assignedToList:
+          type: array
+          items:
+            type: integer
+            format: int64
+          uniqueItems: true
+        approvalRequired:
+          type: boolean
+        product:
+          $ref: "#/components/schemas/Product"
+        quantity:
+          type: number
+          format: double
+        invoiceId:
+          type: string
+        invoiceNumber:
+          type: string
+        ticketId:
+          type: string
+        initialWorkflowComplete:
+          type: boolean
+        customValues:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomValue"
+        comments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Comment"
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/EventLog"
+        startDate:
+          type: string
+          format: date
+        dueDate:
+          type: string
+          format: date
+        created:
+          type: string
+          format: date-time
+        completed:
+          type: string
+          format: date-time
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+        archived:
+          type: boolean
+        kanbanSort:
+          type: integer
+          format: int32
+        isSubTask:
+          type: boolean
+    ProjectMicro:
+      type: object
+      properties:
+        accountId:
+          type: integer
+          format: int64
+        id:
+          type: string
+        clientId:
+          type: string
+        projectTypeId:
+          type: string
+        name:
+          type: string
+        active:
+          type: boolean
+        hexColor:
+          type: string
+    ProjectMini:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: integer
+          format: int64
+        projectTypeId:
+          type: string
+        sampleData:
+          type: boolean
+        clientId:
+          type: string
+        name:
+          type: string
+        active:
+          type: boolean
         startDate:
           type: string
           format: date
@@ -414,677 +2033,202 @@ components:
         dateCreated:
           type: string
           format: date-time
-        client:
-          $ref: '#/components/schemas/Client'
+        client: {}
+        leadGenArchived:
+          type: boolean
         feeSchedule:
-          $ref: '#/components/schemas/FeeSchedule'
+          $ref: "#/components/schemas/FeeSchedule"
         proposalId:
           type: string
-          format: uuid
         proposalName:
           type: string
         hexColor:
           type: string
-          description: Display color
-          example: "#3498db"
         portalAccess:
           type: string
-          description: Portal access level
+          enum:
+          - Full access
+          - Read only
+          - Overview
+          - None
         showTimeWorkedInPortal:
           type: boolean
-
-    CreateProjectInput:
+        portalAccessAssignedOnly:
+          type: boolean
+        projectOwners:
+          type: array
+          items:
+            type: integer
+            format: int64
+          uniqueItems: true
+        customValues:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomValue"
+        paymentHistory:
+          type: array
+          items:
+            $ref: "#/components/schemas/PaymentHistory"
+        files:
+          type: array
+          items:
+            $ref: "#/components/schemas/S3File"
+        deliverables:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProjectDeliverableMini"
+    RetainerPeriod:
       type: object
-      required:
-        - clientName
-        - name
       properties:
-        clientName:
-          type: string
-          description: Name of the client (must exist)
-        name:
-          type: string
-          description: Project name
-        description:
-          type: string
-        startDate:
+        start:
           type: string
           format: date
-        dueDate:
+        end:
           type: string
           format: date
-        feeSchedule:
-          $ref: '#/components/schemas/FeeSchedule'
-        hexColor:
+    S3File:
+      type: object
+      properties:
+        region:
           type: string
-        portalAccess:
+        bucket:
           type: string
-
-    ProjectTaskStage:
+        path:
+          type: string
+        fileName:
+          type: string
+        fileType:
+          type: string
+          enum:
+          - SVG
+          - JPG
+          - GIF
+          - JSON
+          - AI
+          - INDD
+          - JS
+          - CSV
+          - TXT
+          - AVI
+          - HTML
+          - MP3
+          - MP4
+          - RTF
+          - XML
+          - CSS
+          - PSD
+          - PNG
+          - PDF
+          - DOC
+          - XLS
+          - PPT
+          - ZIP
+          - EML
+          - FILE
+        timestamp:
+          type: string
+          format: date-time
+        signedUrl:
+          type: string
+        fileIconUrl:
+          type: string
+    SearchObject:
       type: object
       properties:
         id:
           type: string
-          format: uuid
-        name:
-          type: string
-          description: Stage name
-          example: In Progress
-        order:
+        accountId:
           type: integer
-          description: Display order
-
-    # ==========================================
-    # Invoice Schemas
-    # ==========================================
-
-    InvoiceItem:
-      type: object
-      properties:
-        description:
+          format: int64
+        type:
           type: string
-          description: Line item description
-        quantity:
-          type: number
-          description: Quantity
-        rate:
-          type: number
-          description: Unit rate
-        taxable:
-          type: boolean
-          description: Whether this item is taxable
-        projectName:
+          enum:
+          - CLIENT
+          - CONTACT
+          - PROJECT
+          - AGREEMENT
+          - OPPORTUNITY
+          - INVOICE
+          - TICKET
+          - FORM
+          - MEETING
+          - TASK
+          - FILE
+        clientId:
           type: string
-          description: Associated project name
-
-    InvoiceSendTo:
-      type: object
-      properties:
-        send:
+        archived:
           type: boolean
-          description: Whether to send the invoice
-        contacts:
-          type: array
-          items:
+        priority:
+          type: integer
+          format: int32
+        label:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        date:
+          type: string
+          format: date
+        metaData:
+          type: object
+          additionalProperties:
             type: string
-          description: Email addresses to send to
-        emailTemplateName:
-          type: string
-          description: Name of email template to use
-
-    Invoice:
-      type: object
-      required:
-        - clientName
-        - items
-      properties:
-        id:
-          type: string
-          format: uuid
-        invoiceNumber:
-          type: string
-          description: Invoice number
-          example: INV-2024-001
-        clientName:
-          type: string
-          description: Client name
-        templateName:
-          type: string
-          description: Invoice template name
-        dueDate:
-          type: string
-          format: date
-        taxRate:
-          type: number
-          description: Tax rate percentage
-        discountPercent:
-          type: number
-          description: Discount percentage
-        paymentInstructions:
-          type: string
-        items:
+        vector_search:
           type: array
           items:
-            $ref: '#/components/schemas/InvoiceItem'
-        sendTo:
-          $ref: '#/components/schemas/InvoiceSendTo'
-        status:
+            type: number
+            format: double
+        content:
           type: string
-          description: Invoice status
-          example: draft
-        total:
-          type: number
-          description: Total amount
-        amountDue:
-          type: number
-          description: Amount still due
-
-    CreateInvoiceInput:
-      type: object
-      required:
-        - clientName
-        - items
-      properties:
-        clientName:
-          type: string
-          description: Client name (must exist)
-        invoiceNumber:
-          type: string
-        templateName:
-          type: string
-        dueDate:
-          type: string
-          format: date
-        taxRate:
-          type: number
-        discountPercent:
-          type: number
-        paymentInstructions:
-          type: string
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/InvoiceItem'
-        sendTo:
-          $ref: '#/components/schemas/InvoiceSendTo'
-
-    ApplyPaymentInput:
-      type: object
-      required:
-        - invoiceId
-        - amount
-      properties:
-        invoiceId:
-          type: string
-          format: uuid
-          description: Invoice ID to apply payment to
-        amount:
-          type: number
-          description: Payment amount
-        paymentDate:
-          type: string
-          format: date
-        paymentMethod:
-          type: string
-          description: Payment method used
-          example: Bank Transfer
-        notes:
-          type: string
-          description: Payment notes
-
-    # ==========================================
-    # Task Schemas
-    # ==========================================
-
     Task:
       type: object
-      required:
-        - name
       properties:
         id:
           type: string
-          format: uuid
-        name:
-          type: string
-          description: Task name
         description:
           type: string
-        projectName:
-          type: string
-        clientName:
-          type: string
-        assignedTo:
-          type: array
-          items:
-            type: string
-            format: email
-          description: Email addresses of assigned users
-        dueDate:
-          type: string
-          format: date
-        startDate:
-          type: string
-          format: date
-          description: Task start date
+        complete:
+          type: boolean
+      required:
+      - id
+    ErrorDetails:
+      type: object
+      properties:
         status:
-          type: string
-        priority:
           type: integer
-          description: Numeric priority for sorting in kanban
-        tasks:
-          type: array
-          items:
-            type: string
-          description: Array of subtask names
-        customValues:
-          type: object
-          additionalProperties:
-            type: string
-          description: Map of custom field names to values
-
-    CreateTaskInput:
-      type: object
-      required:
-        - name
-        - projectName
-      properties:
-        name:
+          format: int32
+        error:
           type: string
-          description: Task name
-        description:
-          type: string
-        projectName:
-          type: string
-          description: Project name (must exist, exact match)
-        clientName:
-          type: string
-          description: Client name (must exist, exact match)
-        assignedTo:
-          type: array
-          items:
-            type: string
-            format: email
-          description: Email addresses of users in the workspace
-        dueDate:
-          type: string
-          format: date
-        startDate:
-          type: string
-          format: date
-        status:
-          type: string
-          description: Must match exactly a status in your kanban
-        priority:
-          type: integer
-          description: Numeric priority for sorting in kanban
-        tasks:
-          type: array
-          items:
-            type: string
-          description: Array of subtask names to create
-        customValues:
-          type: object
-          additionalProperties:
-            type: string
-          description: Map of custom field names to values (keys must match project settings)
-
-
-    # ==========================================
-    # Time Entry Schemas
-    # ==========================================
-
-    TimeEntry:
-      type: object
-      required:
-        - timerStart
-        - timerEnd
-        - userEmail
-      properties:
-        id:
-          type: string
-          format: uuid
-        timerStart:
+        timestamp:
           type: string
           format: date-time
-          description: Start time (ISO 8601)
-        timerEnd:
+        message:
           type: string
-          format: date-time
-          description: End time (ISO 8601)
-        clientName:
+        path:
           type: string
-        projectName:
+        detail:
           type: string
-        deliverableName:
-          type: string
-        userEmail:
-          type: string
-          format: email
-          description: Email of user who worked
-        notes:
-          type: string
-        duration:
-          type: integer
-          description: Duration in minutes
-
-    CreateTimeEntryInput:
-      type: object
-      required:
-        - timerStart
-        - timerEnd
-        - userEmail
-      properties:
-        timerStart:
-          type: string
-          format: date-time
-          description: Start time (ISO 8601)
-        timerEnd:
-          type: string
-          format: date-time
-          description: End time (ISO 8601)
-        userEmail:
-          type: string
-          format: email
-        clientName:
-          type: string
-        projectName:
-          type: string
-        deliverableName:
-          type: string
-        createClient:
-          type: boolean
-          description: Auto-create client if not exists
-          default: false
-        createProject:
-          type: boolean
-          description: Auto-create project if not exists
-          default: false
-        createDeliverable:
-          type: boolean
-          description: Auto-create deliverable if not exists
-          default: false
-        notes:
-          type: string
-
-    # ==========================================
-    # Expense Schemas
-    # ==========================================
-
-    Expense:
-      type: object
-      required:
-        - description
-        - amount
-        - date
-      properties:
-        id:
-          type: string
-          format: uuid
-        description:
-          type: string
-        amount:
-          type: number
-        date:
-          type: string
-          format: date
-        vendorName:
-          type: string
-        clientName:
-          type: string
-        projectName:
-          type: string
-        category:
-          type: string
-        billable:
-          type: boolean
-          default: false
-        reimbursable:
-          type: boolean
-          default: false
-
-    CreateExpenseInput:
-      type: object
-      required:
-        - description
-        - amount
-        - date
-      properties:
-        description:
-          type: string
-        amount:
-          type: number
-        date:
-          type: string
-          format: date
-        vendorName:
-          type: string
-        clientName:
-          type: string
-        projectName:
-          type: string
-        category:
-          type: string
-        billable:
-          type: boolean
-        reimbursable:
-          type: boolean
-
-    # ==========================================
-    # Opportunity Schemas
-    # ==========================================
-
-    Opportunity:
-      type: object
-      required:
-        - name
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-          description: Opportunity name
-        clientName:
-          type: string
-        contactName:
-          type: string
-        stage:
-          type: string
-          description: Pipeline stage name
-        value:
-          type: number
-          description: Estimated value
-        probability:
-          type: number
-          description: Win probability (0-100)
-          minimum: 0
-          maximum: 100
-        expectedCloseDate:
-          type: string
-          format: date
-        description:
-          type: string
-
-    CreateOpportunityInput:
-      type: object
-      required:
-        - name
-      properties:
-        name:
-          type: string
-        clientName:
-          type: string
-        contactName:
-          type: string
-        stage:
-          type: string
-        value:
-          type: number
-        probability:
-          type: number
-        expectedCloseDate:
-          type: string
-          format: date
-        description:
-          type: string
-
-    PipelineStage:
+    Answer:
       type: object
       properties:
         id:
           type: string
-          format: uuid
-        name:
-          type: string
-        order:
-          type: integer
-
-    # ==========================================
-    # Ticket Schemas
-    # ==========================================
-
-    TicketFormAnswer:
-      type: object
-      required:
-        - fieldKey
-        - question
-        - answer
-      properties:
         fieldKey:
           type: string
-          description: Property key for reporting and token mapping
+        fieldType:
+          type: string
         question:
           type: string
-          description: The question text associated with this answer
-        answer:
-          type: string
-          description: The answer provided
-
-    Ticket:
-      type: object
-      required:
-        - userEmail
-        - ticketType
-        - comment
-      properties:
-        id:
-          type: string
-          format: uuid
-        userEmail:
-          type: string
-          format: email
-          description: Email of a known contact in the workspace
-        ticketType:
-          type: string
-          description: Ticket type (must match a type in Tickets >> Settings)
-        subject:
-          type: string
-          description: Ticket subject/title
-        comment:
-          type: string
-          description: Initial details/comment of the ticket
-        dueDate:
-          type: string
-          format: date
-          description: Due date in ISO format
-        formData:
-          type: object
-          properties:
-            answers:
-              type: array
-              items:
-                $ref: '#/components/schemas/TicketFormAnswer'
-          description: Structured questions/answers mapped to ticket data
-
-    CreateTicketInput:
-      type: object
-      required:
-        - userEmail
-        - ticketType
-        - comment
-      properties:
-        userEmail:
-          type: string
-          format: email
-          description: Email of a known contact (ticket rejected if not found)
-        ticketType:
-          type: string
-          description: Ticket type (found in Tickets >> Settings)
-        comment:
-          type: string
-          description: Initial details/comment of the ticket
-        subject:
-          type: string
-          description: Ticket subject/title
-        dueDate:
-          type: string
-          format: date
-          description: Due date in ISO format
-        formData:
-          type: object
-          properties:
-            answers:
-              type: array
-              items:
-                $ref: '#/components/schemas/TicketFormAnswer'
-          description: Additional structured questions/answers
-
-    TicketComment:
-      type: object
-      required:
-        - ticketId
-        - content
-      properties:
-        id:
-          type: string
-          format: uuid
-        ticketId:
-          type: string
-          format: uuid
-        content:
-          type: string
-        authorEmail:
-          type: string
-          format: email
-
-    CreateTicketCommentInput:
-      type: object
-      required:
-        - ticketId
-        - content
-      properties:
-        ticketId:
-          type: string
-          format: uuid
-        content:
-          type: string
-        authorEmail:
-          type: string
-          format: email
-
-    # ==========================================
-    # Form Schemas
-    # ==========================================
-
-    FormName:
+        answer: {}
+    FormData:
       type: object
       properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-
-    FormAnswer:
-      type: object
-      required:
-        - fieldKey
-        - question
-        - answer
-      properties:
-        fieldKey:
-          type: string
-          description: Property key for reporting and token mapping
-        question:
-          type: string
-          description: The question text associated with this answer
-        answer:
-          type: string
-          description: The answer provided
-
-    CreateFormSubmissionInput:
-      type: object
-      properties:
-        formName:
-          type: string
-          description: Associate with an existing form template for reporting
         firstName:
           type: string
         lastName:
           type: string
         email:
           type: string
-          format: email
         phone:
           type: string
         role:
@@ -1093,7 +2237,1191 @@ components:
           type: string
         website:
           type: string
-          format: uri
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        locality:
+          type: string
+        postal:
+          type: string
+        country:
+          type: string
+        taxId:
+          type: string
+        sourceUrl:
+          type: string
+        opportunityId:
+          type: string
+        templateId:
+          type: string
+        cardTokenId:
+          type: string
+        leadSource:
+          type: string
+        clientId:
+          type: string
+        answers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Answer"
+        contactIfNull:
+          $ref: "#/components/schemas/Contact"
+          writeOnly: true
+    LongDuration:
+      type: object
+      properties:
+        duration:
+          type: integer
+          format: int64
+        timeUnit:
+          type: string
+          enum:
+          - HOURS
+          - DAYS
+          - WEEKS
+          - MONTHS
+          - YEARS
+    Opportunity:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: integer
+          format: int64
+        clientId:
+          type: string
+        statusId:
+          type: string
+          description: Pipeline stage id (see List Pipeline Stages)
+        name:
+          type: string
+        description:
+          type: string
+        assignedTo:
+          type: array
+          items:
+            type: integer
+            format: int64
+            deprecated: true
+        format:
+          type: string
+          enum:
+          - Markdown
+          - HTML
+        sentiment:
+          type: integer
+          format: int32
+        value:
+          type: number
+          format: double
+        timePeriod:
+          type: string
+          enum:
+          - OneTime
+          - Day
+          - Week
+          - Month
+          - Quarter
+          - SemiAnnual
+          - Year
+        periods:
+          type: integer
+          format: int64
+        estCloseDate:
+          type: string
+          format: date
+        actualCloseDate:
+          type: string
+          format: date
+        formData:
+          $ref: "#/components/schemas/FormData"
+        archive:
+          type: boolean
+        toDos:
+          type: array
+          items:
+            $ref: "#/components/schemas/ToDoItem"
+        customValues:
+          type: array
+          description: Custom-field values
+          items:
+            $ref: "#/components/schemas/CustomValue"
+        created:
+          type: string
+          format: date-time
+        wonOn:
+          type: string
+          format: date-time
+        client:
+          $ref: "#/components/schemas/ClientMini"
+        statusLabel:
+          type: string
+    ToDoItem:
+      type: object
+      properties:
+        id:
+          type: string
+        item:
+          type: string
+        complete:
+          type: boolean
+        dueDate:
+          type: string
+          format: date
+        dateCompleted:
+          type: string
+          format: date-time
+        relativeDueDate:
+          $ref: "#/components/schemas/LongDuration"
+        scopeId:
+          type: string
+    Expense:
+      type: object
+      properties:
+        id:
+          type: string
+        recurringRunKey:
+          type: string
+        accountId:
+          type: integer
+          format: int64
+        vendorId:
+          type: string
+        clientId:
+          type: string
+        projectId:
+          type: string
+        amount:
+          type: number
+          format: double
+        taxRate:
+          type: number
+          format: double
+        taxInclusive:
+          type: boolean
+        billNo:
+          type: string
+        category:
+          type: string
+        dateCreated:
+          type: string
+          format: date-time
+        paidDate:
+          type: string
+          format: date
+        dueDate:
+          type: string
+          format: date
+        currency:
+          type: string
+        exchangeRate:
+          type: number
+        paid:
+          type: boolean
+        description:
+          type: string
+        notes:
+          type: string
+        reimbursable:
+          type: boolean
+        markupPercent:
+          type: number
+          format: double
+        invoiceId:
+          type: string
+        invoiceNumber:
+          type: string
+        integrationKeys:
+          $ref: "#/components/schemas/AccountingIntegrationKeys"
+        sampleData:
+          type: boolean
+        vendor:
+          $ref: "#/components/schemas/Vendor"
+        client:
+          $ref: "#/components/schemas/ClientMini"
+        project:
+          $ref: "#/components/schemas/ProjectMini"
+        localAmount:
+          type: number
+          format: double
+        localTax:
+          type: number
+          format: double
+        localPreTax:
+          type: number
+          format: double
+        localTotalWithMarkup:
+          type: number
+          format: double
+        tax:
+          type: number
+          format: double
+        markupAmount:
+          type: number
+          format: double
+        expenseLabel:
+          type: string
+        total:
+          type: number
+          format: double
+        totalPreTax:
+          type: number
+          format: double
+        integrationExpense:
+          type: boolean
+        totalWithMarkup:
+          type: number
+          format: double
+      required:
+      - accountId
+      - amount
+    Vendor:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: integer
+          format: int64
+        sampleData:
+          type: boolean
+        name:
+          type: string
+        contact:
+          $ref: "#/components/schemas/Contact"
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        locality:
+          type: string
+        postal:
+          type: string
+        country:
+          type: string
+        website:
+          type: string
+        notes:
+          type: string
+        format:
+          type: string
+          enum:
+          - Markdown
+          - HTML
+        taxId:
+          type: string
+        track1099:
+          type: boolean
+        importRecordId:
+          type: string
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/S3File"
+        balanceDue:
+          type: number
+          format: double
+      required:
+      - accountId
+    Client:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: integer
+          format: int64
+        name:
+          type: string
+          minLength: 1
+        clientType:
+          type: string
+          description: Client or Prospect
+          enum:
+          - Client
+          - Prospect
+        initials:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        locality:
+          type: string
+        postal:
+          type: string
+        country:
+          type: string
+        website:
+          type: string
+        phone:
+          type: string
+        color:
+          type: string
+        logo:
+          type: string
+        taxId:
+          type: string
+          description: Client tax identifier
+        leadSource:
+          type: string
+        archive:
+          type: boolean
+        paymentTerms:
+          $ref: "#/components/schemas/PaymentTerms"
+        payInstructions:
+          type: string
+        hourlyAmount:
+          type: number
+          format: double
+        defaultTaxRate:
+          type: number
+          format: double
+        defaultTaxRuleId:
+          type: string
+        roundingIncrement:
+          type: integer
+          format: int64
+        currency:
+          type: string
+        activityInitialized:
+          type: boolean
+        customValues:
+          type: array
+          description: Custom-field values
+          items:
+            $ref: "#/components/schemas/CustomValue"
+        created:
+          type: string
+          format: date-time
+        peppolCompliant:
+          type: boolean
+        notes:
+          type: string
+        notifyOnCreate:
+          type: boolean
+          description: "Request-only flag: notify the workspace owner after create"
+        contacts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Contact"
+        customValue:
+          $ref: "#/components/schemas/CustomValue"
+          writeOnly: true
+      required:
+      - accountId
+      - name
+    PaymentTerms:
+      type: object
+      properties:
+        paymentDays:
+          type: integer
+          format: int32
+        latePaymentFee:
+          type: number
+          format: double
+        depositAmount:
+          type: number
+          format: double
+        depositType:
+          type: string
+          enum:
+          - No deposit
+          - Fixed amount
+          - Percentage
+        hourlyAmount:
+          type: number
+          format: double
+        whoPaysCardFees:
+          type: string
+          enum:
+          - Client
+          - Freelancer
+          - Split
+        fromProposalId:
+          type: string
+        fromProposalSignedDate:
+          type: string
+          format: date-time
+        updatedDate:
+          type: string
+          format: date-time
+        updatedBy:
+          type: string
+      required:
+      - latePaymentFee
+    RestHook:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+          - ClientCreate
+          - ClientUpdate
+          - ClientDelete
+          - InvoiceSent
+          - InvoiceVoided
+          - InvoiceWriteOff
+          - PaymentReceived
+          - AgreementSent
+          - AgreementViewed
+          - AgreementSigned
+          - ProposalSent
+          - ProposalViewed
+          - ProposalSigned
+          - ProjectCreate
+          - ProjectUpdate
+          - ProjectComplete
+          - TimerCreate
+          - TimerUpdate
+          - TimerDelete
+          - FormCompleted
+          - MeetingScheduled
+          - MeetingUpdated
+          - MeetingCancelled
+          - DeliverableApproval
+          - DeliverableCreate
+          - DeliverableUpdate
+          - DeliverableDelete
+          - OpportunityCreate
+          - OpportunityUpdate
+          - OpportunityDelete
+          - TicketCreate
+          - TicketUpdate
+          - TicketDelete
+          - TicketClose
+          - TicketComment
+        hookUrl:
+          type: string
+        filters:
+          type: object
+          additionalProperties:
+            type: string
+        enabled:
+          type: boolean
+        statusTime:
+          type: string
+          format: date-time
+        statusMessage:
+          type: string
+      required:
+      - hookUrl
+      - type
+    TimerCreate:
+      type: object
+      properties:
+        timerStart:
+          type: string
+          format: date-time
+          description: Start timestamp
+          example: 2026-07-08T09:00:00Z
+        timerEnd:
+          type: string
+          format: date-time
+          description: End timestamp
+          example: 2026-07-08T10:30:00Z
+        clientName:
+          type: string
+          description: "Client name, exact match"
+        projectName:
+          type: string
+          description: "Project name, exact match"
+        deliverableName:
+          type: string
+          description: "Deliverable name, exact match"
+        notes:
+          type: string
+          description: Free-text notes
+        userEmail:
+          type: string
+          description: User the time is logged for
+        createClient:
+          type: boolean
+          description: Create the client if it does not exist
+        createProject:
+          type: boolean
+          description: Create the project if it does not exist
+        createDeliverable:
+          type: boolean
+          description: Create the deliverable if it does not exist
+      required:
+      - timerEnd
+      - timerStart
+    TimerEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: integer
+          format: int64
+        sampleData:
+          type: boolean
+        userId:
+          type: integer
+          format: int64
+        timerStart:
+          type: string
+          format: date-time
+        timerEnd:
+          type: string
+          format: date-time
+        pausedAt:
+          type: string
+          format: date-time
+        userFullName:
+          type: string
+        notes:
+          type: string
+        format:
+          type: string
+          enum:
+          - Markdown
+          - HTML
+        clientId:
+          type: string
+        projectId:
+          type: string
+        deliverableId:
+          type: string
+        ticketId:
+          type: string
+        clientName:
+          type: string
+        projectName:
+          type: string
+        deliverableName:
+          type: string
+        ticketName:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        timestampUpdated:
+          type: string
+          format: date-time
+        billable:
+          type: boolean
+        pausedSeconds:
+          type: integer
+          format: int64
+        invoiceId:
+          type: string
+        invoiceNumber:
+          type: string
+        importRecordId:
+          type: string
+        feeSchedule:
+          $ref: "#/components/schemas/FeeSchedule"
+        customGroupFieldValue:
+          type: string
+        wasRounded:
+          type: boolean
+        duration:
+          type: integer
+          format: int64
+      required:
+      - accountId
+      - userId
+    TicketCreate:
+      type: object
+      properties:
+        userEmail:
+          type: string
+          description: Email of the requesting user
+          example: jane@acme.example
+        ticketType:
+          type: string
+          description: Ticket type label
+        subject:
+          type: string
+          description: Ticket subject
+          example: Cannot log in
+        comment:
+          type: string
+          description: Initial comment / body
+        dueDate:
+          type: string
+          format: date
+          description: Optional due date
+        formData:
+          $ref: "#/components/schemas/FormData"
+          description: Structured form data attached to the ticket
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: integer
+          format: int64
+        clientId:
+          type: string
+        clientContactId:
+          type: integer
+          format: int64
+        ticketNumber:
+          type: integer
+          format: int64
+        ccList:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        assignedTo:
+          type: array
+          items:
+            type: integer
+            format: int64
+          uniqueItems: true
+        mergedTickets:
+          type: array
+          items:
+            type: string
+          uniqueItems: true
+        dueDate:
+          type: string
+          format: date
+        subject:
+          type: string
+        open:
+          type: boolean
+        type:
+          type: string
+        status:
+          type: string
+        unread:
+          type: boolean
+        unreadClient:
+          type: boolean
+        lastComment:
+          type: string
+        formData:
+          $ref: "#/components/schemas/FormData"
+        summary:
+          type: string
+        created:
+          type: string
+          format: date-time
+        updated:
+          type: string
+          format: date-time
+        closed:
+          type: string
+          format: date-time
+        snoozedUntil:
+          type: string
+          format: date-time
+        archived:
+          type: boolean
+        client:
+          $ref: "#/components/schemas/ClientMini"
+    TicketComment:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: integer
+          format: int64
+        ticketId:
+          type: string
+        clientId:
+          type: string
+        commentType:
+          type: string
+          enum:
+          - PUBLIC
+          - PRIVATE
+        commentBy:
+          type: integer
+          format: int64
+        commentUserEmail:
+          type: string
+        commentUserName:
+          type: string
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/S3File"
+        comment:
+          type: string
+        fromEmail:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+        updated:
+          type: string
+          format: date-time
+        commentFormat:
+          type: string
+          enum:
+          - PlainText
+          - HTML
+    TicketWrapper:
+      type: object
+      properties:
+        ticket:
+          $ref: "#/components/schemas/Ticket"
+        comments:
+          type: array
+          items:
+            $ref: "#/components/schemas/TicketComment"
+    TicketCommentCreate:
+      type: object
+      properties:
+        ticketNumber:
+          type: integer
+          format: int64
+          description: Number of the ticket to comment on
+          example: 1042
+        userEmail:
+          type: string
+          description: Email of the commenting user
+        privateComment:
+          type: boolean
+          description: If true the comment is internal-only
+        comment:
+          type: string
+          description: Comment body
+      required:
+      - comment
+      - ticketNumber
+    TaskCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Task name
+          example: Design homepage
+        clientName:
+          type: string
+          description: "Client name, exact match"
+        projectName:
+          type: string
+          description: "Project the task belongs to, by exact name"
+        status:
+          type: string
+          description: Task stage label (see List Project Task Stages)
+        description:
+          type: string
+          description: Task description
+        dueDate:
+          type: string
+          format: date
+          description: Due date
+        startDate:
+          type: string
+          format: date
+          description: Start date
+        priority:
+          type: integer
+          format: int32
+          description: Priority
+        tasks:
+          type: array
+          description: Sub-task names
+          items:
+            type: string
+        assignedTo:
+          type: array
+          description: Emails of the users to assign
+          items:
+            type: string
+        customValues:
+          type: object
+          additionalProperties:
+            type: string
+          description: Custom-field values keyed by field name
+      required:
+      - name
+    DeliverableApproval:
+      type: object
+      properties:
+        id:
+          type: string
+        approvalStatus:
+          type: string
+        approvedAt:
+          type: string
+          format: date-time
+        approverName:
+          type: string
+        approverEmail:
+          type: string
+    ProjectDeliverable:
+      type: object
+      properties:
+        id:
+          type: string
+        recurringRunKey:
+          type: string
+        accountId:
+          type: integer
+          format: int64
+        sampleData:
+          type: boolean
+        clientId:
+          type: string
+        projectId:
+          type: string
+        projectTypeId:
+          type: string
+        name:
+          type: string
+        statusId:
+          type: string
+        ticketId:
+          type: string
+        description:
+          type: string
+        descriptionFormat:
+          type: string
+          enum:
+          - Markdown
+          - HTML
+        type:
+          type: string
+          enum:
+          - Primary
+          - SubTask
+        parentTaskId:
+          type: string
+        subTaskSort:
+          type: integer
+          format: int32
+        startDate:
+          type: string
+          format: date
+        dueDate:
+          type: string
+          format: date
+        assignedTo:
+          type: integer
+          format: int64
+          deprecated: true
+        assignedToList:
+          type: array
+          items:
+            type: integer
+            format: int64
+          uniqueItems: true
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+        comments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Comment"
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/EventLog"
+        files:
+          type: array
+          items:
+            $ref: "#/components/schemas/S3File"
+        approvals:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeliverableApproval"
+        customValues:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomValue"
+        archived:
+          type: boolean
+        approvalRequired:
+          type: boolean
+        approvalRequestedAt:
+          type: string
+          format: date-time
+        product:
+          $ref: "#/components/schemas/Product"
+        quantity:
+          type: number
+          format: double
+        kanbanSort:
+          type: integer
+          format: int32
+        priority:
+          type: integer
+          format: int32
+        taskPriority:
+          type: string
+          enum:
+          - Low
+          - Normal
+          - Medium
+          - High
+          - Urgent
+        isDeleted:
+          type: boolean
+        invoiceId:
+          type: string
+        invoiceNumber:
+          type: string
+        importRecordId:
+          type: string
+        initialSetupTask:
+          type: boolean
+        initialWorkflowComplete:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+        completed:
+          type: string
+          format: date-time
+        isSubTask:
+          type: boolean
+      required:
+      - accountId
+    ProjectCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Project name
+          example: Website Redesign
+        clientName:
+          type: string
+          description: "Client the project belongs to, by exact name"
+          example: Acme Kft.
+        startDate:
+          type: string
+          format: date
+          description: Project start date
+          example: 2026-07-15
+        dueDate:
+          type: string
+          format: date
+          description: Project due date
+        portalAccess:
+          type: string
+          description: Client-portal visibility
+          enum:
+          - Full access
+          - Read only
+          - Overview
+          - None
+        feeSchedule:
+          $ref: "#/components/schemas/FeeSchedule"
+          description: Fee schedule configuration
+        showTimeWorkedInPortal:
+          type: boolean
+          description: Show logged time in the client portal
+        templateName:
+          type: string
+          description: "Project template to apply, by name"
+        customValues:
+          type: object
+          additionalProperties:
+            type: string
+          description: Custom-field values keyed by field name
+      required:
+      - clientName
+      - name
+    PaymentCreate:
+      type: object
+      properties:
+        invoiceNumber:
+          type: string
+          description: Formatted invoice number to apply the payment to
+          example: E-2026-042
+        clientName:
+          type: string
+          description: "Client name, exact match"
+          example: Acme Kft.
+        date:
+          type: string
+          format: date
+          description: Payment date
+          example: 2026-08-05
+        amount:
+          type: number
+          format: double
+          description: Payment amount
+          example: 1270.0
+        paymentType:
+          type: string
+          description: Informational payment method label
+          enum:
+          - STRIPE
+          - CHECK
+          - BANK_TRANSFER
+          - CASH
+          - VENMO
+          - PAYPAL
+          - ZELLE
+          - APP_PAYOUT
+          - CREDIT_CARD
+          - OTHER
+        referenceNumber:
+          type: string
+          description: External reference number
+        memo:
+          type: string
+          description: Free-text memo
+      required:
+      - amount
+      - clientName
+      - invoiceNumber
+    OpportunityCreate:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Opportunity name
+          example: Acme retainer
+        description:
+          type: string
+          description: Description
+        clientName:
+          type: string
+          description: "Associated client, by exact name"
+        stageName:
+          type: string
+          description: Pipeline stage name (see List Pipeline Stages)
+          example: Proposal
+        value:
+          type: number
+          format: double
+          description: Estimated value
+          example: 12000
+        estCloseDate:
+          type: string
+          format: date
+          description: Estimated close date
+        leadInfo:
+          $ref: "#/components/schemas/FormData"
+          description: Structured lead information
+        toDos:
+          type: array
+          description: Associated to-do items
+          items:
+            $ref: "#/components/schemas/ToDoItem"
+        customValues:
+          type: object
+          additionalProperties:
+            type: string
+          description: Custom-field values keyed by field name
+      required:
+      - name
+    InvoiceCreate:
+      type: object
+      properties:
+        invoiceNumber:
+          type: string
+          description: Optional explicit invoice number
+          example: E-2026-042
+        clientName:
+          type: string
+          description: "Client to bill, matched by exact name"
+          example: Acme Kft.
+        templateName:
+          type: string
+          description: Invoice template to apply (see List Invoice Templates)
+        description:
+          type: string
+          description: Invoice description
+        dueDate:
+          type: string
+          format: date
+          description: Due date
+          example: 2026-08-01
+        taxRate:
+          type: number
+          format: double
+          description: Flat tax rate percentage applied to taxable items
+          example: 27
+        discountPercent:
+          type: number
+          format: double
+          description: Discount percentage
+        paymentInstructions:
+          type: string
+          description: Payment instructions shown on the invoice
+        items:
+          type: array
+          description: Invoice line items
+          items:
+            $ref: "#/components/schemas/LineItem"
+        sendTo:
+          $ref: "#/components/schemas/SendTo"
+          description: Send configuration. When send is false or omitted the invoice
+            stays in DRAFT
+      required:
+      - clientName
+    LineItem:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Line description
+          example: Website design
+        quantity:
+          type: number
+          format: double
+          description: Quantity
+          example: 1
+        rate:
+          type: number
+          format: double
+          description: Price per unit
+          example: 1000.0
+        taxable:
+          type: boolean
+          description: Whether the line is taxable
+        projectName:
+          type: string
+          description: "Project to associate the line with, by exact name"
+    SendTo:
+      type: object
+      properties:
+        send:
+          type: boolean
+        contacts:
+          type: array
+          items:
+            type: string
+        emailTemplateName:
+          type: string
+    FormSubmissionCreate:
+      type: object
+      properties:
+        formName:
+          type: string
+          description: Name of the form being submitted (see List Form Names)
+          example: Contact Us
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          description: Submitter email
+          example: jane@acme.example
+        phone:
+          type: string
+        role:
+          type: string
+        businessName:
+          type: string
+        website:
+          type: string
         address1:
           type: string
         address2:
@@ -1108,1157 +3436,1476 @@ components:
           type: string
         sourceUrl:
           type: string
-          format: uri
-          description: URL where the form was submitted
         leadSource:
           type: string
+          description: Attribution / lead source
         notes:
           type: string
         pipelineStageName:
           type: string
-          description: Creates an Opportunity in pipeline (must match stage name exactly)
+          description: Pipeline stage to place the lead in
+        taxId:
+          type: string
+          description: Tax identifier
         answers:
           type: array
+          description: Structured question and answer pairs
           items:
-            $ref: '#/components/schemas/FormAnswer'
-          description: Structured question/answer objects
-
-    # ==========================================
-    # File Schemas
-    # ==========================================
-
-    AttachFileFromUrlInput:
-      type: object
+            $ref: "#/components/schemas/Answer"
       required:
-        - url
+      - formName
+    BaseDiscovery:
+      type: object
       properties:
-        url:
+        name:
           type: string
-          format: uri
-          description: URL of the file to attach
-        fileName:
+          minLength: 1
+        font:
           type: string
-          description: Override filename
-        clientName:
+        accentColor:
           type: string
-        projectName:
+        buttonText:
           type: string
-        entityType:
+        showLogo:
+          type: boolean
+        schemaVersion:
+          type: integer
+          format: int32
+        formSettingsV2:
+          $ref: "#/components/schemas/FormSettingsV2"
+        schema:
+          type: array
+          items:
+            $ref: "#/components/schemas/SchemaItem"
+        schemaV2:
+          type: array
+          items:
+            oneOf:
+            - $ref: "#/components/schemas/Button"
+            - $ref: "#/components/schemas/Checkbox"
+            - $ref: "#/components/schemas/Container"
+            - $ref: "#/components/schemas/DateInput"
+            - $ref: "#/components/schemas/Divider"
+            - $ref: "#/components/schemas/FileInput"
+            - $ref: "#/components/schemas/Html"
+            - $ref: "#/components/schemas/ImageBlock"
+            - $ref: "#/components/schemas/Logo"
+            - $ref: "#/components/schemas/NewPage"
+            - $ref: "#/components/schemas/Radio"
+            - $ref: "#/components/schemas/Select"
+            - $ref: "#/components/schemas/Spacer"
+            - $ref: "#/components/schemas/TextArea"
+            - $ref: "#/components/schemas/TextBlock"
+            - $ref: "#/components/schemas/TextInput"
+        confirmationEmailTemplate:
           type: string
-          description: Type of entity to attach to
-        entityId:
+        confirmationRedirect:
           type: string
-          format: uuid
-          description: ID of entity to attach to
-
-    # ==========================================
-    # Calendar Schemas
-    # ==========================================
-
-    CalendarEvent:
-      type: object
+        confirmationText:
+          type: string
+        pipelineStageId:
+          type: string
+        ticketTypeId:
+          type: string
+        sendResultsInEmail:
+          type: boolean
+        reCaptchaEnabled:
+          type: boolean
+        accountLogo:
+          type: string
+        accountLogoDark:
+          type: string
       required:
-        - title
-        - startTime
-        - endTime
+      - name
+    Button:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+      - type: object
+        properties:
+          redirectUrl:
+            type: string
+          text:
+            type: string
+          alignment:
+            type: string
+          style:
+            type: string
+          size:
+            type: string
+          color:
+            type: string
+          textColor:
+            type: string
+    Checkbox:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+      - type: object
+        properties:
+          question:
+            type: string
+          options:
+            type: array
+            items:
+              type: string
+          formatVertically:
+            type: boolean
+    Column:
+      type: object
+      properties:
+        pt:
+          type: integer
+          format: int32
+        pb:
+          type: integer
+          format: int32
+        pr:
+          type: integer
+          format: int32
+        pl:
+          type: integer
+          format: int32
+        items:
+          type: array
+          items:
+            oneOf:
+            - $ref: "#/components/schemas/Button"
+            - $ref: "#/components/schemas/Checkbox"
+            - $ref: "#/components/schemas/Container"
+            - $ref: "#/components/schemas/DateInput"
+            - $ref: "#/components/schemas/Divider"
+            - $ref: "#/components/schemas/FileInput"
+            - $ref: "#/components/schemas/Html"
+            - $ref: "#/components/schemas/ImageBlock"
+            - $ref: "#/components/schemas/Logo"
+            - $ref: "#/components/schemas/NewPage"
+            - $ref: "#/components/schemas/Radio"
+            - $ref: "#/components/schemas/Select"
+            - $ref: "#/components/schemas/Spacer"
+            - $ref: "#/components/schemas/TextArea"
+            - $ref: "#/components/schemas/TextBlock"
+            - $ref: "#/components/schemas/TextInput"
+    Condition:
+      type: object
+      properties:
+        fieldName:
+          type: string
+        operation:
+          type: string
+        answer:
+          type: string
+    Container:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+      - type: object
+        properties:
+          columnCount:
+            type: integer
+            format: int32
+          columns:
+            type: array
+            items:
+              $ref: "#/components/schemas/Column"
+    DateInput:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+      - type: object
+        properties:
+          question:
+            type: string
+          placeholder:
+            type: string
+    Divider:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+      - type: object
+        properties:
+          style:
+            type: string
+          color:
+            type: string
+          weight:
+            type: integer
+            format: int32
+          width:
+            type: integer
+            format: int32
+          pt:
+            type: integer
+            format: int32
+          pb:
+            type: integer
+            format: int32
+    FileInput:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+      - type: object
+        properties:
+          question:
+            type: string
+          placeholder:
+            type: string
+          multi:
+            type: boolean
+          fileTypes:
+            type: array
+            items:
+              type: string
+    FormSettingsV2:
+      type: object
+      properties:
+        fontSize:
+          type: integer
+          format: int32
+        inputStyle:
+          type: string
+        fontColor:
+          type: string
+        formInputColor:
+          type: string
+        backgroundColor:
+          type: string
+        maxWidth:
+          type: integer
+          format: int32
+        enableDraftSave:
+          type: boolean
+        submitText:
+          type: string
+        saveDraftText:
+          type: string
+        submitIcon:
+          type: string
+        draftIcon:
+          type: string
+        nextPageText:
+          type: string
+        prevPageText:
+          type: string
+        nextPageIcon:
+          type: string
+        prevPageIcon:
+          type: string
+        submitAlignment:
+          type: string
+        buttonColor:
+          type: string
+        buttonTextColor:
+          type: string
+        buttonStyle:
+          type: string
+        buttonSize:
+          type: string
+        customCss:
+          type: string
+    FormSubmission:
+      type: object
       properties:
         id:
           type: string
-          format: uuid
-        title:
+        accountId:
+          type: integer
+          format: int64
+        clientId:
           type: string
-        description:
+        formName:
           type: string
-        startTime:
+        submittedAt:
           type: string
           format: date-time
-        endTime:
+        ipLookup:
+          $ref: "#/components/schemas/IpLookup"
+        formData:
+          $ref: "#/components/schemas/FormData"
+        notes:
           type: string
-          format: date-time
-        location:
+        summary:
           type: string
-        clientName:
+        leadGenArchived:
+          type: boolean
+        isDiscovery:
+          type: boolean
+        privateSubmission:
+          type: boolean
+        opportunityId:
           type: string
-        projectName:
+        files:
+          type: array
+          items:
+            $ref: "#/components/schemas/S3File"
+        baseDiscovery:
+          $ref: "#/components/schemas/BaseDiscovery"
+        submissionToken:
           type: string
-        attendees:
+      required:
+      - accountId
+    Html:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+      - type: object
+        properties:
+          html:
+            type: string
+    ImageBlock:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+      - type: object
+        properties:
+          pt:
+            type: integer
+            format: int32
+          pb:
+            type: integer
+            format: int32
+          br:
+            type: integer
+            format: int32
+          scale:
+            type: integer
+            format: int32
+          alignment:
+            type: string
+          url:
+            type: string
+    IpLookup:
+      type: object
+      properties:
+        ip:
+          type: string
+        city:
+          type: string
+        region:
+          type: string
+        country:
+          type: string
+        countryFlag:
+          type: string
+    Logo:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+      - type: object
+        properties:
+          width:
+            type: integer
+            format: int32
+          alignment:
+            type: string
+    NewPage:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+    Radio:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+      - type: object
+        properties:
+          question:
+            type: string
+          options:
+            type: array
+            items:
+              type: string
+          formatVertically:
+            type: boolean
+    SchemaItem:
+      type: object
+      properties:
+        id:
+          type: string
+        fieldType:
+          type: string
+        fieldKey:
+          type: string
+        options:
           type: array
           items:
             type: string
-            format: email
-
-    CreateCalendarEventInput:
+        hasOther:
+          type: boolean
+        htmlHeader:
+          type: string
+        htmlText:
+          type: string
+        placeHolder:
+          type: string
+        response:
+          type: string
+        required:
+          type: boolean
+    SchemaItemV2:
       type: object
-      required:
-        - title
-        - startTime
-        - endTime
+      discriminator:
+        propertyName: type
       properties:
-        title:
+        id:
           type: string
-        description:
+        required:
+          type: boolean
+        fieldName:
           type: string
-        startTime:
+        schemaMapping:
           type: string
-          format: date-time
-        endTime:
-          type: string
-          format: date-time
-        location:
-          type: string
-        clientName:
-          type: string
-        projectName:
-          type: string
-        attendees:
+          enum:
+          - firstName
+          - lastName
+          - email
+          - phone
+          - role
+          - businessName
+          - website
+          - address1
+          - address2
+          - city
+          - locality
+          - postal
+          - country
+          - leadSource
+          - taxId
+        conditions:
           type: array
           items:
-            type: string
-            format: email
-
-    UpdateCalendarEventInput:
-      type: object
+            $ref: "#/components/schemas/Condition"
+        conditionalType:
+          type: string
+        conditionsEnabled:
+          type: boolean
+        type:
+          type: string
       required:
-        - eventId
+      - type
+    Select:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+      - type: object
+        properties:
+          question:
+            type: string
+          placeholder:
+            type: string
+          options:
+            type: array
+            items:
+              type: string
+    Spacer:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+      - type: object
+        properties:
+          height:
+            type: integer
+            format: int32
+    TextArea:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+      - type: object
+        properties:
+          question:
+            type: string
+          placeholder:
+            type: string
+          rows:
+            type: integer
+            format: int32
+    TextBlock:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+      - type: object
+        properties:
+          text:
+            type: string
+    TextInput:
+      allOf:
+      - $ref: "#/components/schemas/SchemaItemV2"
+      - type: object
+        properties:
+          question:
+            type: string
+          placeholder:
+            type: string
+          validateFor:
+            type: string
+            enum:
+            - Email
+            - Phone
+    ExpenseCreate:
+      type: object
       properties:
-        eventId:
+        date:
           type: string
-          format: uuid
-        title:
+          format: date-time
+          description: Expense date
+        amount:
+          type: number
+          format: double
+          description: Amount
+          example: 120.0
+        markupPercentage:
+          type: number
+          format: double
+          description: Markup applied when billed to a client
+        currency:
           type: string
+          description: Currency code
+          example: EUR
+        paid:
+          type: boolean
+          description: Whether the expense is paid
+        reimbursable:
+          type: boolean
+          description: Whether it is reimbursable / billable
+        category:
+          type: string
+          description: Expense category
+          example: Software
+        billNo:
+          type: string
+          description: Bill / receipt number
         description:
           type: string
-        startTime:
+          description: Short description
+        notes:
           type: string
-          format: date-time
-        endTime:
+          description: Free-text notes
+        vendor:
           type: string
-          format: date-time
-        location:
-          type: string
+          description: Vendor name
         clientName:
           type: string
-        projectName:
-          type: string
-        attendees:
-          type: array
-          items:
-            type: string
-            format: email
-
-    DeleteCalendarEventInput:
-      type: object
+          description: "Client to bill, by exact name (optional)"
       required:
-        - eventId
-      properties:
-        eventId:
-          type: string
-          format: uuid
-
-    # ==========================================
-    # Deliverable Schemas
-    # ==========================================
-
-    ApproveDeliverableInput:
+      - amount
+    ApproveDeliverable:
       type: object
-      required:
-        - deliverableId
       properties:
-        deliverableId:
-          type: string
-          format: uuid
-        projectName:
-          type: string
         clientName:
           type: string
-
-    # ==========================================
-    # Template & Reference Schemas
-    # ==========================================
-
-    EmailTemplate:
+          description: "Client name, exact match"
+        projectName:
+          type: string
+          description: "Project name, exact match"
+        deliverableName:
+          type: string
+          description: "Deliverable to approve, exact match"
+      required:
+      - clientName
+      - deliverableName
+      - projectName
+    ContactCreate:
       type: object
       properties:
-        id:
+        first:
           type: string
-          format: uuid
-        name:
+          description: First name
+          example: Jane
+        last:
           type: string
-        subject:
-          type: string
-        body:
-          type: string
-
-    InvoiceTemplate:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-
-    VendorName:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        name:
-          type: string
-
-    WorkspaceUser:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
+          description: Last name
+          example: Doe
         email:
           type: string
-          format: email
+          description: Email address
+          example: jane@acme.example
+        phone:
+          type: string
+          description: Phone number
+        notes:
+          type: string
+          description: Free-text notes
+        clientName:
+          type: string
+          description: "Client to attach the contact to, by exact name"
+          example: Acme Kft.
+        defaultContact:
+          type: boolean
+          description: Mark as the client's default contact
+        portalAccess:
+          type: boolean
+          description: Grant client-portal access
+        invoiceContact:
+          type: boolean
+          description: Include this contact on invoices
+    CalendarEvent:
+      type: object
+      properties:
+        eventId:
+          type: string
+          description: Existing event id to update; omit to create
+        startTime:
+          type: string
+          format: date-time
+          description: Event start
+          example: 2026-07-15T14:00:00
+        endTime:
+          type: string
+          format: date-time
+          description: Event end
+          example: 2026-07-15T15:00:00
+        timezone:
+          type: string
+          description: IANA timezone
+          example: Europe/Budapest
+        fullDay:
+          type: boolean
+          description: All-day event
+        busy:
+          type: boolean
+          description: Mark the time as busy
+        summary:
+          type: string
+          description: Event title
+          example: Kickoff call
+        description:
+          type: string
+          description: Event description
+        location:
+          type: string
+          description: Location
+        userEmail:
+          type: string
+          description: Owner of the event
+    NativeCalendarEvent:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: integer
+          format: int64
+        sampleData:
+          type: boolean
+        userId:
+          type: integer
+          format: int64
+        externalId:
+          type: string
+        startDate:
+          type: string
+          format: date
+        startTime:
+          type: string
+        endDate:
+          type: string
+          format: date
+        endTime:
+          type: string
+        timezone:
+          type: string
+        summary:
+          type: string
+        description:
+          type: string
+        location:
+          type: string
+        dateOnly:
+          type: boolean
+        sharedEvent:
+          type: boolean
+        busyEvent:
+          type: boolean
+        format:
+          type: string
+          enum:
+          - HTML
+          - Markdown
+        reminder:
+          type: boolean
+        remindTime:
+          type: integer
+          format: int32
+        remindTimeUnit:
+          type: string
+          enum:
+          - None
+          - Minutes
+          - Hours
+          - Days
+      required:
+      - endDate
+      - startDate
+      - userId
+    TicketStatusUpdate:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Exact ticket id; takes precedence over ticketNumber
+        ticketNumber:
+          type: integer
+          format: int64
+          description: Ticket number used when id is omitted
+          example: 1001
+        status:
+          type: string
+          description: Workflow status configured for the ticket type
+          example: In Progress
+      required:
+      - status
+    DynamicField:
+      type: object
+      properties:
+        key:
+          type: string
+        label:
+          type: string
+    SimpleAccount:
+      type: object
+      properties:
+        accountId:
+          type: integer
+          format: int64
+        accountName:
+          type: string
+    AuthAccount:
+      type: object
+      properties:
+        accountId:
+          type: integer
+          format: int64
+        accountName:
+          type: string
+        accountLogo:
+          type: string
+        accountLogoDark:
+          type: string
+        subscriptionState:
+          type: string
+          enum:
+          - ACTIVE
+          - PAUSED
+          - EXPIRED
+          - CANCELED
+          - INACTIVE
+        subscriptionType:
+          type: string
+          enum:
+          - FREE
+          - STARTER
+          - PAID
+          - TEAM
+          - NONE
+        subscriptionProvider:
+          type: string
+          enum:
+          - APP_SUMO
+          - WEB
+          - APPLE
+          - GOOGLE
+          - NONE
+        pod:
+          $ref: "#/components/schemas/Pod"
+        sampleMode:
+          type: boolean
+        pricingVersion:
+          type: integer
+          format: int32
+        trialEndsAt:
+          type: string
+          format: date-time
+        created:
+          type: string
+          format: date-time
+        paid:
+          type: boolean
+        ltd:
+          type: boolean
+        free:
+          type: boolean
+        disabled:
+          type: boolean
+        inTrial:
+          type: boolean
+        restricted:
+          type: boolean
+        starter:
+          type: boolean
+    ClientAccess:
+      type: object
+      properties:
+        clients:
+          type: array
+          items:
+            $ref: "#/components/schemas/Client"
+    FeatureAccess:
+      type: object
+      properties:
+        projects:
+          type: boolean
+        invoices:
+          type: boolean
+        accounting:
+          type: boolean
+        pipeline:
+          type: boolean
+        agreements:
+          type: boolean
+        settings:
+          type: boolean
+        timesheets:
+          type: boolean
+        tickets:
+          type: boolean
+        manageTeamCapacity:
+          type: boolean
+    Pod:
+      type: object
+      properties:
+        podId:
+          type: string
+        podUrl:
+          type: string
+    PortalFeatures:
+      type: object
+      properties:
+        accountId:
+          type: integer
+          format: int64
+        projectsEnabled:
+          type: boolean
+        invoicesEnabled:
+          type: boolean
+        proposalsEnabled:
+          type: boolean
+        timeEnabled:
+          type: boolean
+        meetingsEnabled:
+          type: boolean
+        formsEnabled:
+          type: boolean
+        ticketsEnabled:
+          type: boolean
+        filesEnabled:
+          type: boolean
+    ProjectAccess:
+      type: object
+      properties:
+        grantedAt:
+          type: string
+          format: date-time
+        projectId:
+          type: string
+    ProjectAccessList:
+      type: object
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProjectAccess"
+    User:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
         firstName:
           type: string
         lastName:
           type: string
-        role:
+        email:
           type: string
-
-    # ==========================================
-    # Error Schema
-    # ==========================================
-
-    Error:
+        phone:
+          type: string
+        phoneVerified:
+          type: boolean
+        uuid:
+          type: string
+        profilePicture:
+          type: string
+        uploadedPicture:
+          type: boolean
+        pricingVersion:
+          type: integer
+          format: int32
+        userAccounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/UserAccount"
+          uniqueItems: true
+    UserAccount:
       type: object
       properties:
-        error:
+        account:
+          $ref: "#/components/schemas/AuthAccount"
+        userType:
           type: string
-          description: Error message
-        code:
-          type: string
-          description: Error code
-        details:
+          enum:
+          - OWNER
+          - IMPLEMENTER
+          - COLLABORATOR
+          - AUTH_SERVER
+          - FULL_USER
+          - RESTRICTED_USER
+          - CLIENT_PORTAL
+        projectAccess:
+          $ref: "#/components/schemas/ProjectAccessList"
+        clientAccess:
+          $ref: "#/components/schemas/ClientAccess"
+        portalFeatures:
+          $ref: "#/components/schemas/PortalFeatures"
+        featureAccess:
+          $ref: "#/components/schemas/FeatureAccess"
+        clientFeatureMap:
           type: object
-          additionalProperties: true
-
-  responses:
-    UnauthorizedError:
-      description: API key is missing or invalid
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: "Unauthorized"
-            code: "UNAUTHORIZED"
-    NotFoundError:
-      description: Resource not found
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    RateLimitError:
-      description: Rate limit exceeded (100 requests per 5 minutes)
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error: "Rate limit exceeded"
-            code: "RATE_LIMIT_EXCEEDED"
-
-paths:
-  # ==========================================
-  # Client Endpoints
-  # ==========================================
-
-  /action/clients/list:
-    get:
-      tags:
-        - Clients
-      summary: List all clients
-      description: Retrieves a list of all clients in the workspace
-      operationId: listClients
-      responses:
-        '200':
-          description: List of clients
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Client'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/clients/search:
-    get:
-      tags:
-        - Clients
-      summary: Search clients
-      description: Search for clients by name or other criteria
-      operationId: searchClients
-      parameters:
-        - name: query
-          in: query
-          required: true
-          description: Search query string
-          schema:
+          additionalProperties:
+            $ref: "#/components/schemas/PortalFeatures"
+    UserAccountMini:
+      type: object
+      properties:
+        accountId:
+          type: integer
+          format: int64
+        userType:
+          type: string
+          enum:
+          - OWNER
+          - IMPLEMENTER
+          - COLLABORATOR
+          - AUTH_SERVER
+          - FULL_USER
+          - RESTRICTED_USER
+          - CLIENT_PORTAL
+        user:
+          $ref: "#/components/schemas/User"
+        projectAccess:
+          $ref: "#/components/schemas/ProjectAccessList"
+        featureAccess:
+          $ref: "#/components/schemas/FeatureAccess"
+        clientAccess:
+          $ref: "#/components/schemas/ClientAccess"
+    DeliverableStatus:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        hexColor:
+          type: string
+        complete:
+          type: boolean
+        clientApproval:
+          type: boolean
+        clientApprovalReminderDays:
+          type: integer
+          format: int32
+      required:
+      - hexColor
+      - id
+      - label
+    CustomField:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        mappingKey:
+          type: string
+        icon:
+          type: string
+        type:
+          type: string
+          enum:
+          - Text
+          - Numeric
+          - Currency
+          - Date
+          - Select
+          - Radio
+          - Checkbox
+          - Link
+          - Phone
+          - Email
+        showOnCard:
+          type: boolean
+        options:
+          type: array
+          items:
             type: string
-      responses:
-        '200':
-          description: Matching clients
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Client'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/clients/create:
-    post:
-      tags:
-        - Clients
-      summary: Create a new client
-      description: Creates a new client in the workspace
-      operationId: createClient
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateClientInput'
-      responses:
-        '200':
-          description: Created client
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Client'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  # ==========================================
-  # Contact Endpoints
-  # ==========================================
-
-  /action/contacts/search:
-    get:
-      tags:
-        - Contacts
-      summary: Search contacts
-      description: Search for contacts by name or email
-      operationId: searchContacts
-      parameters:
-        - name: query
-          in: query
-          required: true
-          description: Search query string
-          schema:
+    ProjectType:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: integer
+          format: int64
+        name:
+          type: string
+        isDefaultProjectType:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+        updated:
+          type: string
+          format: date-time
+        deliverableFields:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomField"
+        projectFields:
+          type: array
+          items:
+            $ref: "#/components/schemas/CustomField"
+        statusList:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeliverableStatus"
+        notifications:
+          $ref: "#/components/schemas/ProjectTypeNotifications"
+    ProjectTypeNotifications:
+      type: object
+      properties:
+        deliverableApproval:
+          type: string
+        deliverableApprovalReminder:
+          type: string
+        deliverableAssigned:
+          type: string
+        deliverableComment:
+          type: string
+    Stage:
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        hexColor:
+          type: string
+        stageType:
+          type: string
+          enum:
+          - New
+          - InProgress
+          - OnHold
+          - ClosedWon
+          - ClosedLost
+          - Complete
+        automations:
+          type: array
+          items:
             type: string
-      responses:
-        '200':
-          description: Matching contacts
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Contact'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/contacts/create:
-    post:
-      tags:
-        - Contacts
-      summary: Create a new contact
-      description: Creates a new contact for an existing client
-      operationId: createContact
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateContactInput'
-      responses:
-        '200':
-          description: Created contact
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Contact'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  # ==========================================
-  # Project Endpoints
-  # ==========================================
-
-  /action/projects/search:
-    get:
-      tags:
-        - Projects
-      summary: Search projects
-      description: Search for projects by name
-      operationId: searchProjects
-      parameters:
-        - name: query
-          in: query
-          required: true
-          description: Search query string
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Matching projects
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Project'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/projects/create:
-    post:
-      tags:
-        - Projects
-      summary: Create a new project
-      description: Creates a new project for an existing client
-      operationId: createProject
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateProjectInput'
-      responses:
-        '200':
-          description: Created project
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Project'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/taskStages/list:
-    get:
-      tags:
-        - Projects
-      summary: List project task stages
-      description: Retrieves all task stages configured for projects
-      operationId: listProjectTaskStages
-      responses:
-        '200':
-          description: List of task stages
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ProjectTaskStage'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  # ==========================================
-  # Invoice Endpoints
-  # ==========================================
-
-  /action/payableInvoices/search:
-    get:
-      tags:
-        - Invoices
-      summary: Search payable invoices
-      description: Search for invoices that are payable
-      operationId: searchPayableInvoices
-      parameters:
-        - name: query
-          in: query
-          required: false
-          description: Optional search query
-          schema:
-            type: string
-        - name: status
-          in: query
-          required: false
-          description: Filter by invoice status
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Matching invoices
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Invoice'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/invoices/create:
-    post:
-      tags:
-        - Invoices
-      summary: Create a new invoice
-      description: |
-        Creates a new invoice for an existing client.
-        Omit the `sendTo` object to create a draft invoice.
-      operationId: createInvoice
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateInvoiceInput'
-      responses:
-        '200':
-          description: Created invoice
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Invoice'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/invoices/applyPayment:
-    post:
-      tags:
-        - Invoices
-      summary: Apply payment to invoice
-      description: Records a payment against an existing invoice
-      operationId: applyPayment
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ApplyPaymentInput'
-      responses:
-        '200':
-          description: Payment applied
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Invoice'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  # ==========================================
-  # Task Endpoints
-  # ==========================================
-
-  /action/tasks/create:
-    post:
-      tags:
-        - Tasks
-      summary: Create a new task
-      description: Creates a new task within a project
-      operationId: createTask
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateTaskInput'
-      responses:
-        '200':
-          description: Created task
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  # ==========================================
-  # Time Entry Endpoints
-  # ==========================================
-
-  /action/timeWorked/create:
-    post:
-      tags:
-        - Time Tracking
-      summary: Create a time entry
-      description: |
-        Records a time entry for a user.
-        Can optionally auto-create client, project, or deliverable if they don't exist.
-      operationId: createTimeEntry
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateTimeEntryInput'
-      responses:
-        '200':
-          description: Created time entry
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TimeEntry'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  # ==========================================
-  # Expense Endpoints
-  # ==========================================
-
-  /action/expenses/create:
-    post:
-      tags:
-        - Expenses
-      summary: Create an expense
-      description: Records a new expense
-      operationId: createExpense
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateExpenseInput'
-      responses:
-        '200':
-          description: Created expense
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Expense'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  # ==========================================
-  # Opportunity Endpoints
-  # ==========================================
-
-  /action/opportunities/create:
-    post:
-      tags:
-        - Opportunities
-      summary: Create an opportunity
-      description: Creates a new sales opportunity in the pipeline
-      operationId: createOpportunity
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateOpportunityInput'
-      responses:
-        '200':
-          description: Created opportunity
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Opportunity'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/pipelineStages/list:
-    get:
-      tags:
-        - Opportunities
-      summary: List pipeline stages
-      description: Retrieves all configured pipeline stages
-      operationId: listPipelineStages
-      responses:
-        '200':
-          description: List of pipeline stages
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/PipelineStage'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  # ==========================================
-  # Ticket Endpoints
-  # ==========================================
-
-  /action/tickets/create:
-    post:
-      tags:
-        - Tickets
-      summary: Create a ticket
-      description: |
-        Creates a new support ticket. Requires a known contact email (userEmail),
-        ticket type, and initial comment.
-      operationId: createTicket
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateTicketInput'
-      responses:
-        '200':
-          description: Created ticket
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Ticket'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/tickets/comment/create:
-    post:
-      tags:
-        - Tickets
-      summary: Add comment to ticket
-      description: Adds a comment to an existing ticket
-      operationId: createTicketComment
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateTicketCommentInput'
-      responses:
-        '200':
-          description: Created comment
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TicketComment'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  # ==========================================
-  # Form Endpoints
-  # ==========================================
-
-  /action/formNames/list:
-    get:
-      tags:
-        - Forms
-      summary: List form names
-      description: Retrieves all available form names
-      operationId: listFormNames
-      responses:
-        '200':
-          description: List of form names
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/FormName'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/formSubmissions/create:
-    post:
-      tags:
-        - Forms
-      summary: Create form submission
-      description: |
-        Creates a new form submission with lead information and custom answers.
-        Can optionally create a pipeline opportunity by providing pipelineStageName.
-      operationId: createFormSubmission
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateFormSubmissionInput'
-      responses:
-        '200':
-          description: Form submitted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  submissionId:
-                    type: string
-                    format: uuid
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  # ==========================================
-  # File Endpoints
-  # ==========================================
-
-  /action/files/attach:
-    post:
-      tags:
-        - Files
-      summary: Attach file (multipart)
-      description: Uploads and attaches a file using multipart form data
-      operationId: attachFileMultipart
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              required:
-                - file
-              properties:
-                file:
-                  type: string
-                  format: binary
-                  description: File to upload
-                clientName:
-                  type: string
-                projectName:
-                  type: string
-                entityType:
-                  type: string
-                entityId:
-                  type: string
-                  format: uuid
-      responses:
-        '200':
-          description: File attached successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  fileId:
-                    type: string
-                    format: uuid
-                  fileName:
-                    type: string
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/files/attachFromUrl:
-    post:
-      tags:
-        - Files
-      summary: Attach file from URL
-      description: Attaches a file by downloading from a URL
-      operationId: attachFileFromUrl
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AttachFileFromUrlInput'
-      responses:
-        '200':
-          description: File attached successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  fileId:
-                    type: string
-                    format: uuid
-                  fileName:
-                    type: string
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  # ==========================================
-  # Calendar Endpoints
-  # ==========================================
-
-  /action/calendar/create:
-    post:
-      tags:
-        - Calendar
-      summary: Create calendar event
-      description: Creates a new calendar event
-      operationId: createCalendarEvent
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateCalendarEventInput'
-      responses:
-        '200':
-          description: Created calendar event
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CalendarEvent'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/calendar/update:
-    post:
-      tags:
-        - Calendar
-      summary: Update calendar event
-      description: Updates an existing calendar event
-      operationId: updateCalendarEvent
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateCalendarEventInput'
-      responses:
-        '200':
-          description: Updated calendar event
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CalendarEvent'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/calendar/delete:
-    delete:
-      tags:
-        - Calendar
-      summary: Delete calendar event
-      description: Deletes a calendar event
-      operationId: deleteCalendarEvent
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DeleteCalendarEventInput'
-      responses:
-        '200':
-          description: Event deleted successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  # ==========================================
-  # Deliverable Endpoints
-  # ==========================================
-
-  /action/deliverables/approve:
-    post:
-      tags:
-        - Deliverables
-      summary: Approve a deliverable
-      description: Marks a deliverable as approved
-      operationId: approveDeliverable
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ApproveDeliverableInput'
-      responses:
-        '200':
-          description: Deliverable approved
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  # ==========================================
-  # Template & Reference Endpoints
-  # ==========================================
-
-  /action/emailTemplates/list:
-    get:
-      tags:
-        - Templates
-      summary: List email templates
-      description: Retrieves all email templates
-      operationId: listEmailTemplates
-      responses:
-        '200':
-          description: List of email templates
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/EmailTemplate'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/invoiceTemplates/list:
-    get:
-      tags:
-        - Templates
-      summary: List invoice templates
-      description: Retrieves all invoice templates
-      operationId: listInvoiceTemplates
-      responses:
-        '200':
-          description: List of invoice templates
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/InvoiceTemplate'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/vendors/list:
-    get:
-      tags:
-        - Reference Data
-      summary: List vendor names
-      description: Retrieves all vendor names for expense tracking
-      operationId: listVendorNames
-      responses:
-        '200':
-          description: List of vendor names
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/VendorName'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-  /action/users/list:
-    get:
-      tags:
-        - Reference Data
-      summary: List workspace users
-      description: Retrieves all users in the workspace
-      operationId: listWorkspaceUsers
-      responses:
-        '200':
-          description: List of workspace users
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/WorkspaceUser'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '429':
-          $ref: '#/components/responses/RateLimitError'
-
-tags:
-  - name: Clients
-    description: Client management operations
-  - name: Contacts
-    description: Contact management operations
-  - name: Projects
-    description: Project management operations
-  - name: Invoices
-    description: Invoice and billing operations
-  - name: Tasks
-    description: Task management operations
-  - name: Time Tracking
-    description: Time entry operations
-  - name: Expenses
-    description: Expense tracking operations
-  - name: Opportunities
-    description: Sales pipeline and opportunity operations
-  - name: Tickets
-    description: Support ticket operations
-  - name: Forms
-    description: Form submission operations
-  - name: Files
-    description: File attachment operations
-  - name: Calendar
-    description: Calendar event operations
-  - name: Deliverables
-    description: Deliverable management operations
-  - name: Templates
-    description: Email and invoice template operations
-  - name: Reference Data
-    description: Reference data lookups (vendors, users)
+          uniqueItems: true
+      required:
+      - hexColor
+      - id
+      - label
+      - stageType
+    InvoiceLineItem:
+      type: object
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+        quantity:
+          type: number
+          format: double
+          description: Quantity
+          example: 1
+        unitPrice:
+          type: number
+          format: double
+          description: Price per unit
+          example: 1000.0
+        unit:
+          type: string
+          description: "Unit label from the linked product, if any"
+          example: project
+        taxable:
+          type: boolean
+          description: Whether this line contributes to the invoice-level taxable
+            amount
+        lineTotal:
+          type: number
+          format: double
+          description: quantity x unitPrice
+          example: 1000.0
+        type:
+          type: string
+          enum:
+          - DEPOSIT
+          - HOURS
+          - RETAINER
+          - OVERAGE
+          - ADHOC
+          - PROJECT
+          - EXPENSE
+          - TAX
+          - DEPOSIT_APPLIED
+          - LATE_FEE
+          - SUBSCRIPTION
+          - DELIVERABLE
+          - CREDIT
+          - CONVENIENCE
+        visible:
+          type: boolean
+          description: Whether the line is shown on the rendered invoice
+        projectId:
+          type: string
+        projectName:
+          type: string
+        deliverableName:
+          type: string
+    InvoiceMini:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Immutable invoice id (use for matching)
+        invoiceNumber:
+          type: integer
+          format: int64
+          description: Sequential invoice number
+          example: 1042
+        invoiceNumberFormatted:
+          type: string
+          description: Human-facing formatted number
+          example: E-2026-042
+        description:
+          type: string
+        accountId:
+          type: integer
+          format: int64
+        clientId:
+          type: string
+        dateCreated:
+          type: string
+          format: date
+        dateSent:
+          type: string
+          format: date
+        dateDue:
+          type: string
+          format: date
+        dateDueCalculated:
+          type: string
+          format: date
+        datePaid:
+          type: string
+          format: date
+        clientInfo:
+          $ref: "#/components/schemas/ClientInfo"
+        status:
+          type: string
+          description: "DRAFT, SENT, PARTIAL, PAID, PENDING, VOIDED or WRITE-OFF"
+          enum:
+          - INIT
+          - DRAFT
+          - SENT
+          - PARTIAL
+          - PAID
+          - PENDING
+          - VOIDED
+          - WRITE-OFF
+        invoiceType:
+          type: string
+          enum:
+          - STANDARD
+          - DEPOSIT
+        subTotal:
+          type: number
+          format: double
+        convenienceFee:
+          type: number
+          format: double
+        lateFee:
+          type: number
+          format: double
+        discountAmount:
+          type: number
+          format: double
+        creditApplied:
+          type: number
+          format: double
+        tax:
+          type: number
+          format: double
+          description: Calculated invoice-level tax amount
+        taxPercentage:
+          type: number
+          format: double
+          description: "Effective invoice tax rate, including compounding"
+        taxRule:
+          type:
+          - object
+          - "null"
+          description: Selected advanced tax rule; null for a manual percentage
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+            source:
+              type: string
+              enum:
+              - MOXIE
+              - QUICKBOOKS
+              - XERO
+            providerId:
+              type:
+              - string
+              - "null"
+            components:
+              type: array
+              items:
+                $ref: "#/components/schemas/TaxComponent"
+            effectiveRate:
+              type: number
+              format: double
+        taxBreakdown:
+          type: array
+          description: Calculated invoice-level tax components
+          items:
+            $ref: "#/components/schemas/TaxBreakdown"
+        total:
+          type: number
+          format: double
+        localTotal:
+          type: number
+          format: double
+        paymentTotal:
+          type: number
+          format: double
+        localPaymentTotal:
+          type: number
+          format: double
+        amountDue:
+          type: number
+          format: double
+          description: Remaining amount due
+        localAmountDue:
+          type: number
+          format: double
+        currency:
+          type: string
+        integrationKeys:
+          $ref: "#/components/schemas/AccountingIntegrationKeys"
+        viewOnlineUrl:
+          type: string
+          description: Public pay/view link for the invoice
+        payments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Payment"
+        lineItems:
+          type: array
+          description: Invoice line items
+          items:
+            $ref: "#/components/schemas/InvoiceLineItem"
+    Payment:
+      type: object
+      properties:
+        id:
+          type: string
+        amount:
+          type: number
+          format: double
+        pending:
+          type: boolean
+        paidBy:
+          type: string
+        paymentProvider:
+          type: string
+          enum:
+          - STRIPE
+          - CHECK
+          - BANK_TRANSFER
+          - CASH
+          - VENMO
+          - PAYPAL
+          - ZELLE
+          - APP_PAYOUT
+          - CREDIT_CARD
+          - OTHER
+        currency:
+          type: string
+        exchangeRate:
+          type: number
+        referenceNumber:
+          type: string
+        memo:
+          type: string
+        datePaid:
+          type: string
+          format: date
+        timestamp:
+          type: string
+          format: date-time
+        integratedPayment:
+          type: boolean
+        forcePaidInFull:
+          type: boolean
+        integrationKeys:
+          $ref: "#/components/schemas/AccountingIntegrationKeys"
+        isFailedPayment:
+          type: boolean
+        localAmount:
+          type: number
+          format: double
+    TaxBreakdown:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        rate:
+          type: number
+          format: double
+        order:
+          type: integer
+          format: int32
+        compound:
+          type: boolean
+        taxableAmount:
+          type: number
+          format: double
+        amount:
+          type: number
+          format: double
+    TaxComponent:
+      type: object
+      properties:
+        id:
+          type: string
+        providerId:
+          type:
+          - string
+          - "null"
+        name:
+          type: string
+        rate:
+          type: number
+          format: double
+        order:
+          type: integer
+          format: int32
+        compound:
+          type: boolean
+        compoundOnOrder:
+          type:
+          - integer
+          - "null"
+          format: int32
+    AccountMini:
+      type: object
+      properties:
+        accountId:
+          type: integer
+          format: int64
+        accountName:
+          type: string
+        accountLogo:
+          type: string
+        accountLogoDark:
+          type: string
+        currency:
+          type: string
+        country:
+          type: string
+        taxLabel:
+          type: string
+        stripeAccountId:
+          type: string
+        defaultTaxRate:
+          type: number
+          format: double
+        uniqueUrlPath:
+          type: string
+        address1:
+          type: string
+        address2:
+          type: string
+        city:
+          type: string
+        locality:
+          type: string
+        postal:
+          type: string
+        website:
+          type: string
+        phone:
+          type: string
+        payInstructions:
+          type: string
+        taxId:
+          type: string
+        enableGeoLocationOnSignature:
+          type: boolean
+        baseCardFeeRate:
+          type: number
+          format: double
+        splitCardFeeRate:
+          type: number
+          format: double
+        timeZone:
+          type: string
+    AgreementMini:
+      type: object
+      properties:
+        id:
+          type: string
+        accountId:
+          type: integer
+          format: int64
+        name:
+          type: string
+        client:
+          $ref: "#/components/schemas/ClientMini"
+        account:
+          $ref: "#/components/schemas/AccountMini"
+        status:
+          type: string
+          description: "DRAFT, FINALIZED, DECLINED, VOID or ARCHIVED"
+          enum:
+          - Draft
+          - Finalized
+          - Declined
+          - Void
+          - Archived
+        statusTime:
+          type: string
+          format: date-time
+        currency:
+          type: string
+        dateCreated:
+          type: string
+          format: date-time
+        dateCompleted:
+          type: string
+          format: date-time
+          description: When the agreement was fully executed
+        lastEvent:
+          $ref: "#/components/schemas/EventLog"
+        fullyExecuted:
+          type: boolean
+          description: True when all parties have signed
+        userSigned:
+          type: boolean
+          description: Workspace user has signed
+        clientSigned:
+          type: boolean
+          description: Client has signed
+    ApiEmailTemplateSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    ApiEmailTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        subject:
+          type: string
+        htmlContent:
+          type: string
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      name: X-API-KEY
+      in: header

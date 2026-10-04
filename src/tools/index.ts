@@ -1,44 +1,31 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { MoxieClient } from "../client/moxie-client.js";
+import { registerApiTools } from "./api-tool.js";
+import { clientTools } from "./clients.js";
+import { contactTools } from "./contacts.js";
+import { projectTools } from "./projects.js";
+import { taskTools } from "./tasks.js";
+import { deliverableTools } from "./deliverables.js";
+import { invoiceTools } from "./invoices.js";
+import { expenseTools } from "./expenses.js";
+import { timeEntryTools } from "./time-entries.js";
+import { opportunityTools } from "./opportunities.js";
+import { ticketTools } from "./tickets.js";
+import { formTools } from "./forms.js";
+import { calendarTools } from "./calendar.js";
+import { fileTools } from "./files.js";
+import { templateTools } from "./templates.js";
+import { workspaceTools } from "./workspace.js";
+import { agreementTools } from "./agreements.js";
+import { webhookTools } from "./webhooks.js";
 
-import { registerClientTools } from "./clients.js";
-import { registerContactTools } from "./contacts.js";
-import { registerProjectTools } from "./projects.js";
-import { registerInvoiceTools } from "./invoices.js";
-import { registerTaskTools } from "./tasks.js";
-import { registerTimeEntryTools } from "./time-entries.js";
-import { registerExpenseTools } from "./expenses.js";
-import { registerOpportunityTools } from "./opportunities.js";
-import { registerTicketTools } from "./tickets.js";
-import { registerFormTools } from "./forms.js";
-import { registerFileTools } from "./files.js";
-import { registerCalendarTools } from "./calendar.js";
-import { registerDeliverableTools } from "./deliverables.js";
-import { registerTemplateTools } from "./templates.js";
+export const toolDefinitions = [
+  ...clientTools, ...contactTools, ...projectTools, ...taskTools, ...deliverableTools,
+  ...invoiceTools, ...expenseTools, ...timeEntryTools, ...opportunityTools,
+  ...ticketTools, ...formTools, ...calendarTools, ...fileTools, ...templateTools,
+  ...workspaceTools, ...agreementTools, ...webhookTools,
+];
 
-export function registerTools(server: McpServer) {
-  // Client management
-  registerClientTools(server);
-  registerContactTools(server);
-
-  // Project management
-  registerProjectTools(server);
-  registerTaskTools(server);
-  registerDeliverableTools(server);
-
-  // Financial
-  registerInvoiceTools(server);
-  registerExpenseTools(server);
-  registerTimeEntryTools(server);
-
-  // Sales pipeline
-  registerOpportunityTools(server);
-
-  // Support
-  registerTicketTools(server);
-
-  // Utilities
-  registerFormTools(server);
-  registerFileTools(server);
-  registerCalendarTools(server);
-  registerTemplateTools(server);
+export function registerTools(server: McpServer, client?: MoxieClient): void {
+  registerApiTools(server, toolDefinitions, client);
 }

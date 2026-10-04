@@ -1,536 +1,123 @@
-// ============================================
-// Client Types
-// ============================================
+import type { components } from "./openapi.js";
 
-export interface PaymentTerms {
-  paymentDays?: number;
-  latePaymentFee?: number;
-  hourlyAmount?: number;
-  whoPaysCardFees?: 'Client' | 'Freelancer' | 'Split';
-}
+export type { components, paths, operations } from "./openapi.js";
+type Schemas = components["schemas"];
+type PatchValue<T> = T extends (infer Item)[] ? PatchValue<Item>[] | null
+  : T extends object ? { [K in keyof T]?: PatchValue<T[K]> } | null : T | null;
+type PartialUpdate<T> = PatchValue<T> & { id: string; [field: string]: unknown };
 
-export interface Contact {
-  id?: string;
-  accountId?: string;
-  clientId?: string;
-  firstName?: string;
-  lastName?: string;
-  role?: string;
-  phone?: string;
+export type PaymentTerms = Partial<Schemas["PaymentTerms"]>;
+export type Contact = Schemas["Contact"];
+export type Client = Schemas["Client"] & { email?: string | null };
+export type CustomValue = Schemas["CustomValue"];
+export type CreateClientInput = Omit<Partial<Client>, "id" | "accountId" | "paymentTerms" | "contacts" | "email"> & {
+  name: string;
   email?: string;
-  mobile?: string;
-  notes?: string;
-  defaultContact?: boolean;
-  invoiceContact?: boolean;
-  portalAccess?: boolean;
-}
-
-export interface Client {
-  id?: string;
-  accountId?: string;
-  name: string;
-  clientType: 'Client' | 'Prospect';
-  initials?: string;
-  address1?: string;
-  address2?: string;
-  city?: string;
-  locality?: string;
-  postal?: string;
-  country?: string;
-  website?: string;
-  phone?: string;
-  color?: string;
-  taxId?: string;
-  leadSource?: string;
-  archive?: boolean;
   paymentTerms?: PaymentTerms;
-  payInstructions?: string;
-  hourlyAmount?: number;
-  roundingIncrement?: number;
-  currency: string;
-  stripeClientId?: string;
+  contacts?: Partial<Contact>[];
+};
+export type UpdateClientInput = PartialUpdate<Client>;
+export type CreateContactInput = Schemas["ContactCreate"] & { clientName: string };
+export type UpdateContactInput = PartialUpdate<Contact>;
+
+export type FeeSchedule = Schemas["FeeSchedule"];
+export type Project = Schemas["Project"];
+export type ProjectMini = Schemas["ProjectMini"];
+export type ProjectType = Schemas["ProjectType"];
+export type ProjectTaskStage = Schemas["DeliverableStatus"];
+export type CreateProjectInput = Schemas["ProjectCreate"];
+export type UpdateProjectInput = PartialUpdate<Project>;
+export type Task = Schemas["ProjectDeliverable"];
+export type TaskMini = Schemas["ProjectDeliverableMini"];
+export type CreateTaskInput = Schemas["TaskCreate"];
+export type UpdateTaskInput = PartialUpdate<Task>;
+export type ApproveDeliverableInput = Schemas["ApproveDeliverable"];
+
+export type Invoice = Schemas["InvoiceMini"];
+export type InvoiceItem = Schemas["LineItem"];
+export type InvoiceLineItem = Schemas["InvoiceLineItem"];
+export type InvoiceSendTo = Schemas["SendTo"];
+export type CreateInvoiceInput = Schemas["InvoiceCreate"];
+export interface CreateSimpleInvoiceInput {
+  clientId: string;
+  amount: number;
+  dateDue?: string;
+  description?: string;
   notes?: string;
-  contacts?: Contact[];
-  logo?: string;
-}
-
-export interface CreateClientInput {
-  name: string;
-  clientType: 'Client' | 'Prospect';
-  currency: string;
-  initials?: string;
-  address1?: string;
-  address2?: string;
-  city?: string;
-  locality?: string;
-  postal?: string;
-  country?: string;
-  website?: string;
-  phone?: string;
-  color?: string;
-  taxId?: string;
-  leadSource?: string;
-  archive?: boolean;
-  paymentTerms?: PaymentTerms;
-  payInstructions?: string;
-  hourlyAmount?: number;
-  roundingIncrement?: number;
-  stripeClientId?: string;
-  notes?: string;
-  contacts?: Omit<Contact, 'id' | 'accountId' | 'clientId'>[];
-}
-
-// ============================================
-// Project Types
-// ============================================
-
-export interface FeeSchedule {
-  feeType?: 'HOURLY' | 'FIXED' | 'RETAINER';
-  amount?: number;
-  retainerSchedule?: string;
-  estimateMax?: number;
-  estimateMin?: number;
-  retainerStart?: string;
-  retainerTiming?: string;
-  retainerOverageRate?: number;
-  taxable?: boolean;
-}
-
-export interface Project {
-  id?: string;
-  accountId?: string;
-  clientId?: string;
-  name: string;
-  description?: string;
-  active?: boolean;
-  startDate?: string;
-  dueDate?: string;
-  dateCreated?: string;
-  client?: Client;
-  feeSchedule?: FeeSchedule;
-  proposalId?: string;
-  proposalName?: string;
-  hexColor?: string;
-  portalAccess?: string;
-  showTimeWorkedInPortal?: boolean;
-}
-
-export interface CreateProjectInput {
-  clientName: string;
-  name: string;
-  description?: string;
-  startDate?: string;
-  dueDate?: string;
-  feeSchedule?: FeeSchedule;
-  hexColor?: string;
-  portalAccess?: string;
-}
-
-export interface UpdateProjectInput {
-  projectId?: string;
-  projectName?: string;
-  clientName?: string;
-  name?: string;
-  description?: string;
-  startDate?: string;
-  dueDate?: string;
-  feeSchedule?: FeeSchedule;
-  hexColor?: string;
-  portalAccess?: string;
-  active?: boolean;
-}
-
-export interface ProjectTaskStage {
-  id?: string;
-  name: string;
-  order?: number;
-}
-
-// ============================================
-// Invoice Types
-// ============================================
-
-export interface InvoiceItem {
-  description?: string;
-  quantity?: number;
-  rate?: number;
-  taxable?: boolean;
-  projectName?: string;
-}
-
-export interface InvoiceSendTo {
-  send?: boolean;
-  contacts?: string[];
-  emailTemplateName?: string;
-}
-
-export interface Invoice {
-  id?: string;
-  invoiceNumber?: string;
-  clientName: string;
-  templateName?: string;
-  dueDate?: string;
-  taxRate?: number;
-  discountPercent?: number;
-  paymentInstructions?: string;
-  items: InvoiceItem[];
-  sendTo?: InvoiceSendTo;
-  status?: string;
-  total?: number;
-  amountDue?: number;
-}
-
-export interface CreateInvoiceInput {
-  clientName: string;
-  invoiceNumber?: string;
-  templateName?: string;
-  dueDate?: string;
-  taxRate?: number;
-  discountPercent?: number;
-  paymentInstructions?: string;
-  items: InvoiceItem[];
   sendTo?: InvoiceSendTo;
 }
+export type ApplyPaymentInput = Schemas["PaymentCreate"];
+export type PaymentType = NonNullable<ApplyPaymentInput["paymentType"]>;
+export type TaxComponent = Schemas["TaxComponent"];
+export type TaxBreakdown = Schemas["TaxBreakdown"];
+export type TimeEntry = Schemas["TimerEvent"];
+export type CreateTimeEntryInput = Schemas["TimerCreate"];
+export type Expense = Schemas["Expense"];
+export type CreateExpenseInput = Schemas["ExpenseCreate"];
+export type UpdateExpenseInput = PartialUpdate<Expense>;
 
-export interface ApplyPaymentInput {
-  invoiceId: string;
-  amount: number;
-  paymentDate?: string;
-  paymentMethod?: string;
-  notes?: string;
-}
+export type Opportunity = Schemas["Opportunity"];
+export type CreateOpportunityInput = Schemas["OpportunityCreate"];
+export type UpdateOpportunityInput = PartialUpdate<Opportunity>;
+export type PipelineStage = Schemas["Stage"];
+export type Ticket = Schemas["Ticket"];
+export type TicketWrapper = Schemas["TicketWrapper"];
+export type TicketFormAnswer = Schemas["Answer"];
+export type TicketFormData = Schemas["FormData"];
+export type CreateTicketInput = Schemas["TicketCreate"] & { userEmail: string; ticketType: string; comment: string };
+export type TicketComment = Schemas["TicketComment"];
+export type CreateTicketCommentInput = Schemas["TicketCommentCreate"];
+export type UpdateTicketStatusInput = Schemas["TicketStatusUpdate"] & ({ id: string } | { ticketNumber: number });
+export type FormName = string;
+export type FormAnswer = Schemas["Answer"];
+export type FormSubmission = Schemas["FormSubmission"];
+export type CreateFormSubmissionInput = Schemas["FormSubmissionCreate"];
 
-// ============================================
-// Task Types
-// ============================================
-
-export interface Task {
-  id?: string;
-  name: string;
-  description?: string;
-  projectName?: string;
-  clientName?: string;
-  assignedTo?: string[];
-  dueDate?: string;
-  startDate?: string;
-  status?: string;
-  priority?: number;
-  tasks?: string[];
-  customValues?: Record<string, string>;
-}
-
-export interface CreateTaskInput {
-  name: string;
-  description?: string;
-  projectName: string;
-  clientName?: string;
-  assignedTo?: string[];
-  dueDate?: string;
-  startDate?: string;
-  status?: string;
-  priority?: number;
-  tasks?: string[];
-  customValues?: Record<string, string>;
-}
-
-
-// ============================================
-// Time Entry Types
-// ============================================
-
-export interface TimeEntry {
-  id?: string;
-  timerStart: string;
-  timerEnd: string;
-  clientName?: string;
-  projectName?: string;
-  deliverableName?: string;
-  userEmail: string;
-  notes?: string;
-  duration?: number;
-}
-
-export interface CreateTimeEntryInput {
-  timerStart: string;
-  timerEnd: string;
-  userEmail: string;
-  clientName?: string;
-  projectName?: string;
-  deliverableName?: string;
-  createClient?: boolean;
-  createProject?: boolean;
-  createDeliverable?: boolean;
-  notes?: string;
-}
-
-// ============================================
-// Expense Types
-// ============================================
-
-export interface Expense {
-  id?: string;
-  description: string;
-  amount: number;
-  date: string;
-  vendorName?: string;
-  clientName?: string;
-  projectName?: string;
-  category?: string;
-  billable?: boolean;
-  reimbursable?: boolean;
-}
-
-export interface CreateExpenseInput {
-  description: string;
-  amount: number;
-  date: string;
-  vendorName?: string;
-  clientName?: string;
-  projectName?: string;
-  category?: string;
-  billable?: boolean;
-  reimbursable?: boolean;
-}
-
-// ============================================
-// Opportunity Types
-// ============================================
-
-export interface Opportunity {
-  id?: string;
-  name: string;
-  clientName?: string;
-  contactName?: string;
-  stage?: string;
-  value?: number;
-  probability?: number;
-  expectedCloseDate?: string;
-  description?: string;
-}
-
-export interface CreateOpportunityInput {
-  name: string;
-  clientName?: string;
-  contactName?: string;
-  stage?: string;
-  value?: number;
-  probability?: number;
-  expectedCloseDate?: string;
-  description?: string;
-}
-
-export interface PipelineStage {
-  id?: string;
-  name: string;
-  order?: number;
-}
-
-// ============================================
-// Ticket Types
-// ============================================
-
-export interface TicketFormAnswer {
-  fieldKey: string;
-  question: string;
-  answer: string;
-}
-
-export interface TicketFormData {
-  answers: TicketFormAnswer[];
-}
-
-export interface Ticket {
-  id?: string;
-  userEmail: string;
-  ticketType: string;
-  subject?: string;
-  comment: string;
-  dueDate?: string;
-  formData?: TicketFormData;
-}
-
-export interface CreateTicketInput {
-  userEmail: string;
-  ticketType: string;
-  comment: string;
-  subject?: string;
-  dueDate?: string;
-  formData?: TicketFormData;
-}
-
-export interface TicketComment {
-  id?: string;
-  ticketId: string;
-  content: string;
-  authorEmail?: string;
-}
-
-export interface CreateTicketCommentInput {
-  ticketId: string;
-  content: string;
-  authorEmail?: string;
-}
-
-// ============================================
-// Form Types
-// ============================================
-
-export interface FormName {
-  id?: string;
-  name: string;
-}
-
-export interface FormAnswer {
-  fieldKey: string;
-  question: string;
-  answer: string;
-}
-
-export interface FormSubmission {
-  formName?: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phone?: string;
-  role?: string;
-  businessName?: string;
-  website?: string;
-  address1?: string;
-  address2?: string;
-  city?: string;
-  locality?: string;
-  postal?: string;
-  country?: string;
-  sourceUrl?: string;
-  leadSource?: string;
-  notes?: string;
-  pipelineStageName?: string;
-  answers?: FormAnswer[];
-}
-
-export interface CreateFormSubmissionInput {
-  formName?: string;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  phone?: string;
-  role?: string;
-  businessName?: string;
-  website?: string;
-  address1?: string;
-  address2?: string;
-  city?: string;
-  locality?: string;
-  postal?: string;
-  country?: string;
-  sourceUrl?: string;
-  leadSource?: string;
-  notes?: string;
-  pipelineStageName?: string;
-  answers?: FormAnswer[];
-}
-
-// ============================================
-// File Types
-// ============================================
-
-export interface AttachFileFromUrlInput {
-  url: string;
+export type AttachmentType = "CLIENT" | "PROJECT" | "DELIVERABLE" | "OPPORTUNITY" | "EXPENSE" | "TICKET";
+export interface AttachFileInput {
+  id: string;
+  type: AttachmentType;
+  filePath: string;
   fileName?: string;
-  clientName?: string;
-  projectName?: string;
-  entityType?: string;
-  entityId?: string;
+  contentType?: string;
 }
-
-// ============================================
-// Calendar Types
-// ============================================
-
-export interface CalendarEvent {
-  id?: string;
-  title: string;
-  description?: string;
-  startTime: string;
-  endTime: string;
-  location?: string;
-  clientName?: string;
-  projectName?: string;
-  attendees?: string[];
+export interface AttachFileFromUrlInput {
+  id: string;
+  type: AttachmentType;
+  fileUrl: string;
+  fileName: string;
 }
+export type CalendarEvent = Schemas["NativeCalendarEvent"];
+export type CreateCalendarEventInput = Omit<Schemas["CalendarEvent"], "eventId">;
+export type UpdateCalendarEventInput = Schemas["CalendarEvent"] & { eventId: string };
+export type DeleteCalendarEventInput = { id: string } | { eventId: string };
 
-export interface CreateCalendarEventInput {
-  title: string;
-  description?: string;
-  startTime: string;
-  endTime: string;
-  location?: string;
-  clientName?: string;
-  projectName?: string;
-  attendees?: string[];
-}
+export type EmailTemplate = Schemas["ApiEmailTemplate"];
+export type EmailTemplateSummary = Schemas["ApiEmailTemplateSummary"];
+export type InvoiceTemplate = string;
+export type VendorName = string;
+export type WorkspaceUser = Schemas["UserAccountMini"];
+export type Agreement = Schemas["AgreementMini"];
+export type DynamicField = Schemas["DynamicField"];
+export type SimpleAccount = Schemas["SimpleAccount"];
+export type RestHook = Schemas["RestHook"];
+export type WebhookEventType = NonNullable<RestHook["type"]>;
 
-export interface UpdateCalendarEventInput extends Partial<CreateCalendarEventInput> {
-  eventId: string;
-}
-
-export interface DeleteCalendarEventInput {
-  eventId: string;
-}
-
-// ============================================
-// Deliverable Types
-// ============================================
-
-export interface ApproveDeliverableInput {
-  deliverableId: string;
-  projectName?: string;
-  clientName?: string;
-}
-
-// ============================================
-// Template Types
-// ============================================
-
-export interface EmailTemplate {
-  id?: string;
-  name: string;
-  subject?: string;
-  body?: string;
-}
-
-export interface InvoiceTemplate {
-  id?: string;
-  name: string;
-}
-
-export interface VendorName {
-  id?: string;
-  name: string;
-}
-
-export interface WorkspaceUser {
-  id?: string;
-  email: string;
-  firstName?: string;
-  lastName?: string;
-  role?: string;
-}
-
-// ============================================
-// Contact Creation Types
-// ============================================
-
-export interface CreateContactInput {
-  clientName: string;
-  firstName?: string;
-  lastName?: string;
-  role?: string;
-  phone?: string;
-  email?: string;
-  mobile?: string;
-  notes?: string;
-  defaultContact?: boolean;
-  invoiceContact?: boolean;
-  portalAccess?: boolean;
+// The prose Account Lookup reference supplies this response; its schema is absent from the OpenAPI download.
+export interface AccountInfo {
+  accountId: number;
+  accountName: string;
+  address1?: string | null;
+  address2?: string | null;
+  city?: string | null;
+  locality?: string | null;
+  postal?: string | null;
+  country?: string | null;
+  taxId?: string | null;
+  taxLabel?: string | null;
+  defaultTaxRate?: number | null;
+  currency?: string | null;
+  website?: string | null;
+  phone?: string | null;
+  payInstructions?: string | null;
 }

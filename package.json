@@ -1,15 +1,17 @@
 {
   "name": "withmoxie-mcp-server",
-  "version": "1.1.2",
+  "version": "2.0.0",
   "description": "MCP server for Moxie CRM integration - manage clients, contacts, projects, invoices, time tracking, and more",
   "type": "module",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "bin": {
-    "withmoxie-mcp-server": "./build/index.js"
+    "withmoxie-mcp-server": "build/index.js"
   },
   "files": [
-    "build"
+    "build",
+    "openapi.yaml",
+    "docs"
   ],
   "publishConfig": {
     "access": "public"
@@ -17,9 +19,13 @@
   "scripts": {
     "build": "rm -rf build && tsc && chmod 755 build/index.js",
     "dev": "tsx watch src/index.ts",
-    "inspect": "npx @modelcontextprotocol/inspector node build/index.js",
-    "lint": "eslint . --ext .ts",
-    "test": "npm run build"
+    "inspect": "npx --yes @modelcontextprotocol/inspector@2.9.0 node build/index.js",
+    "lint": "eslint .",
+    "test": "npm run check:api && npm run build && node scripts/generate-coverage.mjs --check && node --test test/*.test.mjs",
+    "generate:api": "node scripts/generate-api.mjs",
+    "check:api": "node scripts/generate-api.mjs --check",
+    "typecheck": "tsc --noEmit",
+    "docs:coverage": "npm run build && node scripts/generate-coverage.mjs"
   },
   "keywords": [
     "mcp",
@@ -45,13 +51,22 @@
   },
   "homepage": "https://github.com/flyingwebie/withmoxie-mcp-server#readme",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.9.0",
-    "axios": "^1.8.4",
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "axios": "^1.20.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^20.11.0",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0",
+    "openapi-typescript": "^7.13.0",
     "tsx": "^4.7.0",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "typescript-eslint": "^8.71.0",
+    "yaml": "^2.9.1"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
