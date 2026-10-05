@@ -1,5 +1,9 @@
 # Moxie CRM MCP Server
 
+> **Obsolete — use Moxie's official MCP server instead.** Moxie has released its own MCP tools, which supersede this community server. See [Moxie's official MCP tools, including reports, goals, and automations](https://help.withmoxie.com/en/articles/16751074-use-every-moxie-mcp-tool#reports-goals-automation).
+>
+> The documentation below is retained for users of this legacy server.
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-green.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://www.typescriptlang.org/)
